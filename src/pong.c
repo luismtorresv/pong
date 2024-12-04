@@ -18,6 +18,8 @@ Rectangle pallet_1 =
 Rectangle pallet_2 =
   (Rectangle){ .x = 770, .y = 40, .width = 20, .height = 100 };
 float speed = 5.0f;
+char counter_1 = '0';
+char counter_2 = '0';
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -145,6 +147,17 @@ UpdateDrawFrame(void)
                y_dashed + line_height,
                WHITE);
     }
+
+    DrawTextCodepoint(GetFontDefault(),
+                      counter_1,
+                      (Vector2){ GetScreenWidth() * 1 / 4, 40 },
+                      30,
+                      WHITE);
+    DrawTextCodepoint(GetFontDefault(),
+                      counter_2,
+                      (Vector2){ GetScreenWidth() * 3 / 4, 40 },
+                      30,
+                      WHITE);
 
     if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
       pallet_1.y -=
