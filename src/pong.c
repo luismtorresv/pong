@@ -14,9 +14,9 @@
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
 Rectangle pallet_1 =
-  (Rectangle){ .x = 10, .y = 40, .width = 20, .height = 100 };
+  (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
 Rectangle pallet_2 =
-  (Rectangle){ .x = 770, .y = 40, .width = 20, .height = 100 };
+  (Rectangle){ .x = 770, .y = 0, .width = 20, .height = 100 };
 float speed = 5.0f;
 char counter_1 = '0';
 char counter_2 = '0';
@@ -139,6 +139,10 @@ UpdateDrawFrame(void)
     if (new_round) {
       ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
       ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
+
+      pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
+      pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
+
       new_round = false;
     }
 
