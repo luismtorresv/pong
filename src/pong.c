@@ -135,6 +135,17 @@ UpdateDrawFrame(void)
     DrawRectangleRec(pallet_1, WHITE);
     DrawRectangleRec(pallet_2, WHITE);
 
+    int line_separation = 10;
+    int line_height = 20;
+    for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
+         y_dashed += (line_height + line_separation)) {
+      DrawLine(GetScreenWidth() / 2,
+               y_dashed,
+               GetScreenWidth() / 2,
+               y_dashed + line_height,
+               WHITE);
+    }
+
     if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
       pallet_1.y -=
         speed; // Paradoxical, but that's the way the coordinate system works.
