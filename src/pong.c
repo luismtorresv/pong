@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-Rectangle pallet_1 =
+Rectangle pallet_1 = (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
   (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
 Rectangle pallet_2 =
   (Rectangle){ .x = 770, .y = 0, .width = 20, .height = 100 };
@@ -22,6 +22,8 @@ char counter_1 = '0';
 char counter_2 = '0';
 Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 20, .height = 20 };
 bool new_round = true;
+Vector2 ball_speed = { 0.0f, 0.0f };
+bool player_1_starts = true;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -143,6 +145,9 @@ UpdateDrawFrame(void)
       pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
       pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
 
+      ball_speed.x = player_1_starts ? -3.0f : 3.0f;
+      player_1_starts = !player_1_starts;
+
       new_round = false;
     }
 
@@ -172,6 +177,9 @@ UpdateDrawFrame(void)
                       30,
                       WHITE);
 
+    ball.x += ball_speed.x;
+    ball.y -= ball_speed.y;
+
     if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
       pallet_1.y -=
         speed; // Paradoxical, but that's the way the coordinate system works.
@@ -182,6 +190,15 @@ UpdateDrawFrame(void)
       pallet_2.y -= speed;
     if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
       pallet_2.y += speed;
+
+    if (ball.x < 0) {
+      ++counter_2;
+      new_round = true;
+
+    } else if (ball.x > GetScreenWidth()) {
+      ++counter_1;
+      new_round = true;
+    }
   }
   EndDrawing();
   //----------------------------------------------------------------------------------
