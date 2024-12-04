@@ -1,96 +1,94 @@
 /*******************************************************************************************
-*
-*   project_name
-*
-*   This example has been created using raylib 1.0 (www.raylib.com)
-*   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
-*
-*   Copyright (c) 2013-2024 Ramon Santamaria (@raysan5)
-*
-********************************************************************************************/
+ *
+ *   pong
+ *
+ ********************************************************************************************/
 
 #include "raylib.h"
 
 #if defined(PLATFORM_WEB)
-    #include <emscripten/emscripten.h>
+#include <emscripten/emscripten.h>
 #endif
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-Camera camera = { 0 };
-Vector3 cubePosition = { 0 };
+Rectangle pallet_1 =
+  (Rectangle){ .x = 10, .y = 40, .width = 20, .height = 100 };
+Rectangle pallet_2 =
+  (Rectangle){ .x = 770, .y = 40, .width = 20, .height = 100 };
+float speed = 5.0f;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
-static void UpdateDrawFrame(void);          // Update and draw one frame
+static void
+UpdateDrawFrame(void); // Update and draw one frame
 
 //----------------------------------------------------------------------------------
 // Main entry point
 //----------------------------------------------------------------------------------
-int main()
+int
+main()
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+  // Initialization
+  //--------------------------------------------------------------------------------------
+  const int screenWidth = 800;
+  const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib - project_name");
-
-    camera.position = (Vector3){ 3.0f, 3.0f, 2.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    camera.fovy = 60.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+  InitWindow(screenWidth, screenHeight, "pong");
+  SetConfigFlags(FLAG_FULLSCREEN_MODE);
+  SetWindowMinSize(screenWidth, screenHeight);
 
 #if defined(PLATFORM_WEB)
-    emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
+  emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
 #else
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+  SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+  //--------------------------------------------------------------------------------------
 
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        UpdateDrawFrame();
-    }
+  // Main game loop
+  while (!WindowShouldClose()) // Detect window close button or ESC key
+  {
+    UpdateDrawFrame();
+  }
 #endif
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();                  // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+  // De-Initialization
+  //--------------------------------------------------------------------------------------
+  CloseWindow(); // Close window and OpenGL context
+  //--------------------------------------------------------------------------------------
 
-    return 0;
+  return 0;
 }
 
 // Update and draw game frame
-static void UpdateDrawFrame(void)
+static void
+UpdateDrawFrame(void)
 {
-    // Update
-    //----------------------------------------------------------------------------------
-    UpdateCamera(&camera, CAMERA_ORBITAL);
-    //----------------------------------------------------------------------------------
+  // Draw
+  //----------------------------------------------------------------------------------
+  BeginDrawing();
+  {
+  ClearBackground(RAYWHITE);
 
-    // Draw
-    //----------------------------------------------------------------------------------
-    BeginDrawing();
+  DrawText("pong", 10, 40, 20, DARKGRAY);
 
-        ClearBackground(RAYWHITE);
+  DrawFPS(10, 10);
 
-        BeginMode3D(camera);
+  DrawRectangleRec(pallet_1, RED);
+  DrawRectangleRec(pallet_2, RED);
 
-            DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, RED);
-            DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, BLUE);
-            DrawGrid(10, 1.0f);
+  if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
+      pallet_1.y -=
+        speed; // Paradoxical, but that's the way the coordinate system works.
+  if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
+    pallet_1.y += speed;
 
-        EndMode3D();
-
-        DrawText("Welcome to raylib basic sample", 10, 40, 20, DARKGRAY);
-
-        DrawFPS(10, 10);
-
-    EndDrawing();
-    //----------------------------------------------------------------------------------
+  if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
+      pallet_2.y -= speed;
+  if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
+    pallet_2.y += speed;
+  }
+  EndDrawing();
+  //----------------------------------------------------------------------------------
 }
