@@ -14,7 +14,6 @@
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
 Rectangle pallet_1 = (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
-  (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
 Rectangle pallet_2 =
   (Rectangle){ .x = 770, .y = 0, .width = 20, .height = 100 };
 float speed = 5.0f;
@@ -28,7 +27,7 @@ bool player_1_starts = true;
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
-static void
+static bool
 UpdateDrawFrame(void); // Update and draw one frame
 
 //----------------------------------------------------------------------------------
@@ -112,9 +111,10 @@ main()
   }
 
   // Main game loop
-  while (!WindowShouldClose()) // Detect window close button or ESC key
-  {
-    UpdateDrawFrame();
+  bool has_game_ended = false;
+  while (!WindowShouldClose() // Detect window close button or ESC key
+         && !has_game_ended) {
+    has_game_ended = UpdateDrawFrame();
   }
 #endif
 
@@ -127,9 +127,43 @@ main()
 }
 
 // Update and draw game frame
-static void
+static bool
 UpdateDrawFrame(void)
 {
+  if (new_round) {
+    if (counter_1 > '9' || counter_2 > '9') {
+      ClearBackground(BLACK);
+      char* end_message = "end of game!";
+      Vector2 text_size = get_text_size(end_message, 30);
+      Timer timer;
+      StartTimer(&timer, 2);
+      BeginDrawing();
+      {
+        ClearBackground(BLACK);
+        DrawText(end_message,
+                 (float)GetScreenWidth() / 2 - text_size.x / 2,
+                 (float)GetScreenHeight() / 2 - text_size.y / 2,
+                 30,
+                 WHITE);
+      }
+      EndDrawing();
+      while (!TimerDone(timer)) {
+      }
+      return true; // Game has ended
+    }
+
+    ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
+    ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
+
+    pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
+    pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
+
+    ball_speed.x = player_1_starts ? -3.0f : 3.0f;
+    player_1_starts = !player_1_starts;
+
+    new_round = false;
+  }
+
   // Draw
   //----------------------------------------------------------------------------------
   BeginDrawing();
@@ -137,19 +171,6 @@ UpdateDrawFrame(void)
     ClearBackground(BLACK);
 
     DrawFPS(10, 10);
-
-    if (new_round) {
-      ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
-      ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
-
-      pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
-      pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
-
-      ball_speed.x = player_1_starts ? -3.0f : 3.0f;
-      player_1_starts = !player_1_starts;
-
-      new_round = false;
-    }
 
     DrawRectangleRec(ball, WHITE);
     DrawRectangleRec(pallet_1, WHITE);
@@ -202,4 +223,5 @@ UpdateDrawFrame(void)
   }
   EndDrawing();
   //----------------------------------------------------------------------------------
+  return false;
 }
