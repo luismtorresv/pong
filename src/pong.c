@@ -26,6 +26,47 @@ static void
 UpdateDrawFrame(void); // Update and draw one frame
 
 //----------------------------------------------------------------------------------
+// Ad hoc implementation of a timer from the wiki
+//----------------------------------------------------------------------------------
+typedef struct Timer
+{
+  double startTime; // Start time (seconds)
+  double lifeTime;  // Lifetime (seconds)
+} Timer;
+
+static void
+StartTimer(Timer* timer, double lifetime)
+{
+  timer->startTime = GetTime();
+  timer->lifeTime = lifetime;
+}
+
+static bool
+TimerDone(Timer timer)
+{
+  return GetTime() - timer.startTime >= timer.lifeTime;
+}
+
+static double
+GetElapsed(Timer timer)
+{
+  return GetTime() - timer.startTime;
+}
+
+//----------------------------------------------------------------------------------
+// Utility function to center text on the screen
+// See also <https://old.reddit.com/r/raylib/comments/1c8wcqd/comment/l0hk1g1/>
+//----------------------------------------------------------------------------------
+Vector2
+get_text_size(const char* text, int font_size)
+{
+  int defaultFontSize = 10; // From rtext.c
+  int spacing = font_size / defaultFontSize;
+  return MeasureTextEx(
+    GetFontDefault(), text, (float)font_size, (float)spacing);
+}
+
+//----------------------------------------------------------------------------------
 // Main entry point
 //----------------------------------------------------------------------------------
 int
@@ -37,7 +78,6 @@ main()
   const int screenHeight = 450;
 
   InitWindow(screenWidth, screenHeight, "pong");
-  SetConfigFlags(FLAG_FULLSCREEN_MODE);
   SetWindowMinSize(screenWidth, screenHeight);
 
 #if defined(PLATFORM_WEB)
@@ -45,6 +85,25 @@ main()
 #else
   SetTargetFPS(60); // Set our game to run at 60 frames-per-second
   //--------------------------------------------------------------------------------------
+
+  // Show welcome message
+  char* title = "pong!";
+  Vector2 text_size = get_text_size(title, 30);
+
+  Timer timer;
+  StartTimer(&timer, 2);
+  while (!TimerDone(timer)) {
+    BeginDrawing();
+    {
+      ClearBackground(BLACK);
+      DrawText(title,
+               (float)GetScreenWidth() / 2 - text_size.x / 2,
+               (float)GetScreenHeight() / 2 - text_size.y / 2,
+               30,
+               WHITE);
+    }
+    EndDrawing();
+  }
 
   // Main game loop
   while (!WindowShouldClose()) // Detect window close button or ESC key
@@ -69,25 +128,23 @@ UpdateDrawFrame(void)
   //----------------------------------------------------------------------------------
   BeginDrawing();
   {
-  ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
 
-  DrawText("pong", 10, 40, 20, DARKGRAY);
+    DrawFPS(10, 10);
 
-  DrawFPS(10, 10);
+    DrawRectangleRec(pallet_1, WHITE);
+    DrawRectangleRec(pallet_2, WHITE);
 
-  DrawRectangleRec(pallet_1, RED);
-  DrawRectangleRec(pallet_2, RED);
-
-  if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
+    if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
       pallet_1.y -=
         speed; // Paradoxical, but that's the way the coordinate system works.
-  if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
-    pallet_1.y += speed;
+    if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
+      pallet_1.y += speed;
 
-  if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
+    if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
       pallet_2.y -= speed;
-  if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
-    pallet_2.y += speed;
+    if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
+      pallet_2.y += speed;
   }
   EndDrawing();
   //----------------------------------------------------------------------------------
