@@ -20,6 +20,8 @@ Rectangle pallet_2 =
 float speed = 5.0f;
 char counter_1 = '0';
 char counter_2 = '0';
+Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 20, .height = 20 };
+bool new_round = true;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -134,6 +136,13 @@ UpdateDrawFrame(void)
 
     DrawFPS(10, 10);
 
+    if (new_round) {
+      ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
+      ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
+      new_round = false;
+    }
+
+    DrawRectangleRec(ball, WHITE);
     DrawRectangleRec(pallet_1, WHITE);
     DrawRectangleRec(pallet_2, WHITE);
 
