@@ -159,6 +159,7 @@ UpdateDrawFrame(void)
     pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
 
     ball_speed.x = player_1_starts ? -3.0f : 3.0f;
+    ball_speed.y = 0;
     player_1_starts = !player_1_starts;
 
     new_round = false;
@@ -171,10 +172,6 @@ UpdateDrawFrame(void)
     ClearBackground(BLACK);
 
     DrawFPS(10, 10);
-
-    DrawRectangleRec(ball, WHITE);
-    DrawRectangleRec(pallet_1, WHITE);
-    DrawRectangleRec(pallet_2, WHITE);
 
     int line_separation = 10;
     int line_height = 20;
@@ -212,14 +209,41 @@ UpdateDrawFrame(void)
     if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
       pallet_2.y += speed;
 
+    if (CheckCollisionRecs(ball, pallet_1)) {
+      ball_speed.y += 1;
+      ball_speed.x -= 1;
+      if (ball.y == pallet_1.y + pallet_1.height / 2 - ball.height / 2) {
+        ball_speed.y = 0;
+      }
+      ball_speed.x = -ball_speed.x;
+    } else if (CheckCollisionRecs(ball, pallet_2)) {
+      ball_speed.y += 1;
+      ball_speed.x += 1;
+      if (ball.y == pallet_2.y + pallet_2.height / 2 - ball.height / 2) {
+        ball_speed.y = 0;
+      }
+      ball_speed.x = -ball_speed.x;
+    }
+
+    if (ball.y < 0) {
+      ball.y = 0;
+      ball_speed.y = -ball_speed.y;
+    } else if (ball.y + ball.height > GetScreenHeight()) {
+      ball.y = GetScreenHeight() - ball.height;
+      ball_speed.y = -ball_speed.y;
+    }
+
     if (ball.x < 0) {
       ++counter_2;
       new_round = true;
-
     } else if (ball.x > GetScreenWidth()) {
       ++counter_1;
       new_round = true;
     }
+
+    DrawRectangleRec(ball, WHITE);
+    DrawRectangleRec(pallet_1, WHITE);
+    DrawRectangleRec(pallet_2, WHITE);
   }
   EndDrawing();
   //----------------------------------------------------------------------------------
