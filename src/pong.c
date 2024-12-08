@@ -13,6 +13,9 @@
 #define PALLET_LEFT 1
 #define PALLET_RIGHT 2
 
+Vector2
+get_text_size(const char* text, int font_size);
+
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
@@ -106,10 +109,37 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 }
 
 //----------------------------------------------------------------------------------
+// Display the name of the game.
+//----------------------------------------------------------------------------------
+static void
+show_welcome_message()
+{
+  const char* title = "pong!";
+  int font_size = 30;
+  Vector2 text_size = get_text_size(title, font_size);
+
+  BeginDrawing();
+  {
+    ClearBackground(BLACK);
+    DrawText(title,
+             (float)GetScreenWidth() / 2 - text_size.x / 2,
+             (float)GetScreenHeight() / 2 - text_size.y / 2,
+             font_size,
+             WHITE);
+  }
+  EndDrawing();
+
+  Timer timer;
+  StartTimer(&timer, 2);
+  while (!TimerDone(timer)) {
+  }
+}
+
+//----------------------------------------------------------------------------------
 // Utility function to center text on the screen
 // See also <https://old.reddit.com/r/raylib/comments/1c8wcqd/comment/l0hk1g1/>
 //----------------------------------------------------------------------------------
-Vector2
+static Vector2
 get_text_size(const char* text, int font_size)
 {
   int defaultFontSize = 10; // From rtext.c
@@ -140,24 +170,7 @@ main()
   SetTargetFPS(60); // Set our game to run at 60 frames-per-second
   //--------------------------------------------------------------------------------------
 
-  // Show welcome message
-  char* title = "pong!";
-  Vector2 text_size = get_text_size(title, 30);
-
-  Timer timer;
-  StartTimer(&timer, 2);
-  while (!TimerDone(timer)) {
-    BeginDrawing();
-    {
-      ClearBackground(BLACK);
-      DrawText(title,
-               (float)GetScreenWidth() / 2 - text_size.x / 2,
-               (float)GetScreenHeight() / 2 - text_size.y / 2,
-               30,
-               WHITE);
-    }
-    EndDrawing();
-  }
+  show_welcome_message();
 
   // Main game loop
   bool has_game_ended = false;
