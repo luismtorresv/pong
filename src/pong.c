@@ -233,7 +233,7 @@ UpdateDrawFrame(void)
       ball_speed.y = -ball_speed.y;
     }
 
-    if (ball.x < 0) {
+    if (ball.x + ball.width < 0) {
       ++counter_2;
       new_round = true;
     } else if (ball.x > GetScreenWidth()) {
