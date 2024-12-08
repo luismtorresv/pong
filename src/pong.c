@@ -10,6 +10,9 @@
 #include <emscripten/emscripten.h>
 #endif
 
+#define PALLET_LEFT 1
+#define PALLET_RIGHT 2
+
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
@@ -59,6 +62,50 @@ GetElapsed(Timer timer)
 }
 
 //----------------------------------------------------------------------------------
+// Handle collisions for both pallets
+//----------------------------------------------------------------------------------
+static void
+handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
+{
+  if (CheckCollisionRecs(*ball, *pallet)) {
+    Rectangle collision_rec = GetCollisionRec(*ball, *pallet);
+    TraceLog(LOG_DEBUG,
+             TextFormat("x=%f, y=%f, width=%f, height=%f",
+                        collision_rec.x,
+                        collision_rec.y,
+                        collision_rec.width,
+                        collision_rec.height));
+
+    // Handle case where the ball hits from below.
+    if (collision_rec.width >= collision_rec.height) {
+      ball_speed.y = -ball_speed.y;
+      if (collision_rec.y < pallet->y + pallet->height / 2)
+        ball->y = pallet->y - ball->height;
+      else
+        ball->y = pallet->y + pallet->height;
+    }
+
+    // Zero out velocity if the ball hits right in the middle of the pallet.
+    if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
+      ball_speed.y = 0;
+    else
+      ball_speed.y += 1;
+
+    // Correct x position and increase horizontal velocity.
+    if (pallet_id == PALLET_LEFT) {
+      ball->x = pallet->x + pallet->width;
+      ball_speed.x -= 1;
+    } else {
+      ball->x = pallet->x - ball->width;
+      ball_speed.x += 1;
+    }
+
+    // Bump.
+    ball_speed.x = -ball_speed.x;
+  }
+}
+
+//----------------------------------------------------------------------------------
 // Utility function to center text on the screen
 // See also <https://old.reddit.com/r/raylib/comments/1c8wcqd/comment/l0hk1g1/>
 //----------------------------------------------------------------------------------
@@ -79,6 +126,8 @@ main()
 {
   // Initialization
   //--------------------------------------------------------------------------------------
+  SetTraceLogLevel(LOG_ALL);
+
   const int screenWidth = 800;
   const int screenHeight = 450;
 
@@ -209,21 +258,8 @@ UpdateDrawFrame(void)
     if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
       pallet_2.y += speed;
 
-    if (CheckCollisionRecs(ball, pallet_1)) {
-      ball_speed.y += 1;
-      ball_speed.x -= 1;
-      if (ball.y == pallet_1.y + pallet_1.height / 2 - ball.height / 2) {
-        ball_speed.y = 0;
-      }
-      ball_speed.x = -ball_speed.x;
-    } else if (CheckCollisionRecs(ball, pallet_2)) {
-      ball_speed.y += 1;
-      ball_speed.x += 1;
-      if (ball.y == pallet_2.y + pallet_2.height / 2 - ball.height / 2) {
-        ball_speed.y = 0;
-      }
-      ball_speed.x = -ball_speed.x;
-    }
+    handle_collisions(&ball, &pallet_1, PALLET_LEFT);
+    handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
 
     if (ball.y < 0) {
       ball.y = 0;
