@@ -25,7 +25,7 @@ Rectangle pallet_2 =
 float speed = 5.0f;
 char counter_1 = '0';
 char counter_2 = '0';
-Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 20, .height = 20 };
+Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 10, .height = 10 };
 bool new_round = true;
 Vector2 ball_speed = { 0.0f, 0.0f };
 bool player_1_starts = true;
