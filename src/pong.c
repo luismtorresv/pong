@@ -13,9 +13,6 @@
 #define PALLET_LEFT 1
 #define PALLET_RIGHT 2
 
-Vector2
-get_text_size(const char* text, int font_size);
-
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
@@ -35,6 +32,9 @@ bool player_1_starts = true;
 //----------------------------------------------------------------------------------
 static bool
 UpdateDrawFrame(void); // Update and draw one frame
+
+static Vector2
+get_text_size(const char* text, int font_size);
 
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
@@ -109,26 +109,35 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 }
 
 //----------------------------------------------------------------------------------
+// Draw centered text on the screen.
+//----------------------------------------------------------------------------------
+static void
+draw_centered_text(const char* text,
+                   int font_size,
+                   float x_offset,
+                   float y_offset)
+{
+  Vector2 text_size = get_text_size(text, font_size);
+
+  BeginDrawing();
+  {
+    ClearBackground(BLACK);
+    DrawText(text,
+             (float)GetScreenWidth() / 2 - text_size.x / 2 + x_offset,
+             (float)GetScreenHeight() / 2 - text_size.y / 2 + y_offset,
+             font_size,
+             WHITE);
+  }
+  EndDrawing();
+}
+
+//----------------------------------------------------------------------------------
 // Display the name of the game.
 //----------------------------------------------------------------------------------
 static void
 show_welcome_message()
 {
-  const char* title = "pong!";
-  int font_size = 30;
-  Vector2 text_size = get_text_size(title, font_size);
-
-  BeginDrawing();
-  {
-    ClearBackground(BLACK);
-    DrawText(title,
-             (float)GetScreenWidth() / 2 - text_size.x / 2,
-             (float)GetScreenHeight() / 2 - text_size.y / 2,
-             font_size,
-             WHITE);
-  }
-  EndDrawing();
-
+  draw_centered_text("pong!", 30, 0, 0);
   Timer timer;
   StartTimer(&timer, 2);
   while (!TimerDone(timer)) {
@@ -137,7 +146,8 @@ show_welcome_message()
 
 //----------------------------------------------------------------------------------
 // Utility function to center text on the screen
-// See also <https://old.reddit.com/r/raylib/comments/1c8wcqd/comment/l0hk1g1/>
+// See also
+// <https://old.reddit.com/r/raylib/comments/1c8wcqd/comment/l0hk1g1/>
 //----------------------------------------------------------------------------------
 static Vector2
 get_text_size(const char* text, int font_size)
@@ -194,21 +204,9 @@ UpdateDrawFrame(void)
 {
   if (new_round) {
     if (counter_1 > '9' || counter_2 > '9') {
-      ClearBackground(BLACK);
-      char* end_message = "end of game!";
-      Vector2 text_size = get_text_size(end_message, 30);
+      draw_centered_text("end of game!", 30, 0, 0);
       Timer timer;
       StartTimer(&timer, 2);
-      BeginDrawing();
-      {
-        ClearBackground(BLACK);
-        DrawText(end_message,
-                 (float)GetScreenWidth() / 2 - text_size.x / 2,
-                 (float)GetScreenHeight() / 2 - text_size.y / 2,
-                 30,
-                 WHITE);
-      }
-      EndDrawing();
       while (!TimerDone(timer)) {
       }
       return true; // Game has ended
