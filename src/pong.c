@@ -19,13 +19,17 @@
 Rectangle pallet_1 = (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
 Rectangle pallet_2 =
   (Rectangle){ .x = 770, .y = 0, .width = 20, .height = 100 };
-float speed = 5.0f;
+Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 10, .height = 10 };
+
+const float max_speed = 100.0f;
+const float pallet_vertical_speed = 5.0f;
+
 char counter_1 = '0';
 char counter_2 = '0';
-Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 10, .height = 10 };
 bool new_round = true;
-Vector2 ball_speed = { 0.0f, 0.0f };
 bool player_1_starts = true;
+
+Vector2 ball_speed = { 0.0f, 0.0f };
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -35,6 +39,15 @@ UpdateDrawFrame(void); // Update and draw one frame
 
 static Vector2
 get_text_size(const char* text, int font_size);
+
+static bool
+can_change_ball_speed(float x, float y);
+
+static void
+increase_horizontal_ball_speed(float change);
+
+static void
+increase_vertical_ball_speed(float change);
 
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
@@ -91,21 +104,47 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
     // Zero out velocity if the ball hits right in the middle of the pallet.
     if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
       ball_speed.y = 0;
+    else if (GetRandomValue(0, 1))
+      increase_vertical_ball_speed(1);
     else
-      ball_speed.y += 1;
+      increase_vertical_ball_speed(-1);
 
     // Correct x position and increase horizontal velocity.
     if (pallet_id == PALLET_LEFT) {
       ball->x = pallet->x + pallet->width;
-      ball_speed.x -= 1;
+      increase_horizontal_ball_speed(-1);
     } else {
       ball->x = pallet->x - ball->width;
-      ball_speed.x += 1;
+      increase_horizontal_ball_speed(1);
     }
 
     // Bump.
     ball_speed.x = -ball_speed.x;
   }
+}
+
+//----------------------------------------------------------------------------------
+// Only allow changing the ball speed if it does not surpass the maximum speed.
+//----------------------------------------------------------------------------------
+static bool
+can_change_ball_speed(float x, float y)
+{
+  TraceLog(LOG_DEBUG, "speed: %f", x * x + y * y);
+  return ((x * x + y * y) <= max_speed);
+}
+
+static void
+increase_horizontal_ball_speed(float change)
+{
+  if (can_change_ball_speed(ball_speed.x + change, ball_speed.y))
+    ball_speed.x += change;
+}
+
+static void
+increase_vertical_ball_speed(float change)
+{
+  if (can_change_ball_speed(ball_speed.x, ball_speed.y + change))
+    ball_speed.y += change;
 }
 
 //----------------------------------------------------------------------------------
@@ -259,15 +298,15 @@ UpdateDrawFrame(void)
     ball.y -= ball_speed.y;
 
     if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
-      pallet_1.y -=
-        speed; // Paradoxical, but that's the way the coordinate system works.
+      pallet_1.y -= pallet_vertical_speed; // Paradoxical, but that's the way
+                                           // the coordinate system works.
     if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
-      pallet_1.y += speed;
+      pallet_1.y += pallet_vertical_speed;
 
     if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
-      pallet_2.y -= speed;
+      pallet_2.y -= pallet_vertical_speed;
     if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
-      pallet_2.y += speed;
+      pallet_2.y += pallet_vertical_speed;
 
     handle_collisions(&ball, &pallet_1, PALLET_LEFT);
     handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
