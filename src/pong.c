@@ -80,13 +80,13 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
                         collision_rec.height));
 
     // Handle case where the ball hits from below.
-    if (collision_rec.width >= collision_rec.height) {
-      ball_speed.y = -ball_speed.y;
-      if (collision_rec.y < pallet->y + pallet->height / 2)
-        ball->y = pallet->y - ball->height;
-      else
-        ball->y = pallet->y + pallet->height;
-    }
+    /* if (collision_rec.width >= collision_rec.height) { */
+    /*   ball_speed.y = -ball_speed.y; */
+    /*   if (collision_rec.y < pallet->y + pallet->height / 2) */
+    /*     ball->y = pallet->y - ball->height; */
+    /*   else */
+    /*     ball->y = pallet->y + pallet->height; */
+    /* } */
 
     // Zero out velocity if the ball hits right in the middle of the pallet.
     if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
