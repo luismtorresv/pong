@@ -253,6 +253,8 @@ main()
 
   show_welcome_message();
 
+  pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
+  pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
   // Main game loop
   bool has_game_ended = false;
   while (!WindowShouldClose() // Detect window close button or ESC key
@@ -285,9 +287,6 @@ UpdateDrawFrame(void)
 
     ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
     ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
-
-    pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
-    pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
 
     ball_speed.x = player_1_starts ? -3.0f : 3.0f;
     ball_speed.y = 0;
