@@ -5,6 +5,7 @@
  ********************************************************************************************/
 
 #include "raylib.h"
+#include "raymath.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -21,7 +22,7 @@ Rectangle pallet_2 =
   (Rectangle){ .x = 770, .y = 0, .width = 20, .height = 100 };
 Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 10, .height = 10 };
 
-const float max_speed = 100.0f;
+const Vector2 max_speed = { 100.0, 140.0 };
 const float pallet_vertical_speed = 5.0f;
 
 char counter_1 = '0';
@@ -40,14 +41,8 @@ UpdateDrawFrame(void); // Update and draw one frame
 static Vector2
 get_text_size(const char* text, int font_size);
 
-static bool
-can_change_ball_speed(float x, float y);
-
 static void
-increase_horizontal_ball_speed(float change);
-
-static void
-increase_vertical_ball_speed(float change);
+set_ball_speed(Vector2 new_ball_speed);
 
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
@@ -105,17 +100,17 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
     if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
       ball_speed.y = 0;
     else if (GetRandomValue(0, 1))
-      increase_vertical_ball_speed(1);
+      set_ball_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
     else
-      increase_vertical_ball_speed(-1);
+      set_ball_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
 
     // Correct x position and increase horizontal velocity.
     if (pallet_id == PALLET_LEFT) {
       ball->x = pallet->x + pallet->width;
-      increase_horizontal_ball_speed(-1);
+      set_ball_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
     } else {
       ball->x = pallet->x - ball->width;
-      increase_horizontal_ball_speed(1);
+      set_ball_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
     }
 
     // Bump.
@@ -126,25 +121,14 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 //----------------------------------------------------------------------------------
 // Only allow changing the ball speed if it does not surpass the maximum speed.
 //----------------------------------------------------------------------------------
-static bool
-can_change_ball_speed(float x, float y)
-{
-  TraceLog(LOG_DEBUG, "speed: %f", x * x + y * y);
-  return ((x * x + y * y) <= max_speed);
-}
-
 static void
-increase_horizontal_ball_speed(float change)
+set_ball_speed(Vector2 new_ball_speed)
 {
-  if (can_change_ball_speed(ball_speed.x + change, ball_speed.y))
-    ball_speed.x += change;
-}
-
-static void
-increase_vertical_ball_speed(float change)
-{
-  if (can_change_ball_speed(ball_speed.x, ball_speed.y + change))
-    ball_speed.y += change;
+  TraceLog(
+    LOG_DEBUG, "new_ball_speed: %4f, %4f", new_ball_speed.x, new_ball_speed.y);
+  ball_speed = Vector2Min(ball_speed, new_ball_speed);
+  TraceLog(
+    LOG_DEBUG, "actual new_ball_speed: %4f, %4f", ball_speed.x, ball_speed.y);
 }
 
 //----------------------------------------------------------------------------------
