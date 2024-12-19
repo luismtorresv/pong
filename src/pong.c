@@ -197,6 +197,53 @@ get_text_size(const char* text, int font_size)
     GetFontDefault(), text, (float)font_size, (float)spacing);
 }
 
+static void
+handle_keyboard_input()
+{
+  // Player 1.
+  if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
+    pallet_1.y -= pallet_vertical_speed; // Paradoxical, but that's the way
+                                         // the coordinate system works.
+  if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
+    pallet_1.y += pallet_vertical_speed;
+
+  // Player 2.
+  if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
+    pallet_2.y -= pallet_vertical_speed;
+  if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
+    pallet_2.y += pallet_vertical_speed;
+}
+
+static void
+draw_counters()
+{
+  Font font = GetFontDefault();
+  int font_size = 30;
+  int y_pos = 40;
+  float width = GetScreenWidth();
+  DrawTextCodepoint(
+    font, counter_1, (Vector2){ width * 1 / 4, y_pos }, font_size, WHITE);
+  DrawTextCodepoint(
+    font, counter_2, (Vector2){ width * 3 / 4, y_pos }, font_size, WHITE);
+}
+
+static void
+draw_middle_lines()
+{
+  int line_separation = 10;
+  int line_height = 20;
+  int width = GetScreenWidth();
+  int height = GetScreenHeight();
+  for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
+       y_dashed += (line_height + line_separation)) {
+    DrawLine(GetScreenWidth() / 2,
+             y_dashed,
+             GetScreenWidth() / 2,
+             y_dashed + line_height,
+             WHITE);
+  }
+}
+
 //----------------------------------------------------------------------------------
 // Main entry point
 //----------------------------------------------------------------------------------
@@ -271,42 +318,13 @@ UpdateDrawFrame(void)
     ClearBackground(BLACK);
 
     DrawFPS(10, 10);
-
-    int line_separation = 10;
-    int line_height = 20;
-    for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
-         y_dashed += (line_height + line_separation)) {
-      DrawLine(GetScreenWidth() / 2,
-               y_dashed,
-               GetScreenWidth() / 2,
-               y_dashed + line_height,
-               WHITE);
-    }
-
-    DrawTextCodepoint(GetFontDefault(),
-                      counter_1,
-                      (Vector2){ GetScreenWidth() * 1 / 4, 40 },
-                      30,
-                      WHITE);
-    DrawTextCodepoint(GetFontDefault(),
-                      counter_2,
-                      (Vector2){ GetScreenWidth() * 3 / 4, 40 },
-                      30,
-                      WHITE);
+    draw_counters();
+    draw_middle_lines();
 
     ball.x += ball_speed.x;
     ball.y -= ball_speed.y;
 
-    if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
-      pallet_1.y -= pallet_vertical_speed; // Paradoxical, but that's the way
-                                           // the coordinate system works.
-    if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
-      pallet_1.y += pallet_vertical_speed;
-
-    if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
-      pallet_2.y -= pallet_vertical_speed;
-    if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
-      pallet_2.y += pallet_vertical_speed;
+    handle_keyboard_input();
 
     handle_collisions(&ball, &pallet_1, PALLET_LEFT);
     handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
