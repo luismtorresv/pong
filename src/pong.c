@@ -252,6 +252,7 @@ main()
 {
   // Initialization
   //--------------------------------------------------------------------------------------
+  SetRandomSeed(671);
   SetTraceLogLevel(LOG_ALL);
 
   const int screenWidth = 800;
