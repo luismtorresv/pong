@@ -4,15 +4,7 @@
  *
  ********************************************************************************************/
 
-#include "raylib.h"
-#include "raymath.h"
-
-#if defined(PLATFORM_WEB)
-#include <emscripten/emscripten.h>
-#endif
-
-#define PALLET_LEFT 1
-#define PALLET_RIGHT 2
+#include "pong.h"
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -32,27 +24,12 @@ bool player_1_starts = true;
 
 Vector2 ball_speed = { 0.0f, 0.0f };
 
-//----------------------------------------------------------------------------------
-// Local Functions Declaration
-//----------------------------------------------------------------------------------
-static bool
-UpdateDrawFrame(void); // Update and draw one frame
-
-static Vector2
-get_text_size(const char* text, int font_size);
-
-static void
-set_ball_speed(Vector2 new_ball_speed);
+GameScreen current_screen = TITLE;
+Timer timer;
 
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
 //----------------------------------------------------------------------------------
-typedef struct Timer
-{
-  double startTime; // Start time (seconds)
-  double lifeTime;  // Lifetime (seconds)
-} Timer;
-
 static void
 StartTimer(Timer* timer, double lifetime)
 {
@@ -142,29 +119,11 @@ draw_centered_text(const char* text,
 {
   Vector2 text_size = get_text_size(text, font_size);
 
-  BeginDrawing();
-  {
-    ClearBackground(BLACK);
-    DrawText(text,
-             (float)GetScreenWidth() / 2 - text_size.x / 2 + x_offset,
-             (float)GetScreenHeight() / 2 - text_size.y / 2 + y_offset,
-             font_size,
-             WHITE);
-  }
-  EndDrawing();
-}
-
-//----------------------------------------------------------------------------------
-// Display the name of the game.
-//----------------------------------------------------------------------------------
-static void
-show_welcome_message()
-{
-  draw_centered_text("pong!", 30, 0, 0);
-  Timer timer;
-  StartTimer(&timer, 2);
-  while (!TimerDone(timer)) {
-  }
+  DrawText(text,
+           (float)GetScreenWidth() / 2 - text_size.x / 2 + x_offset,
+           (float)GetScreenHeight() / 2 - text_size.y / 2 + y_offset,
+           font_size,
+           WHITE);
 }
 
 //----------------------------------------------------------------------------------
@@ -216,8 +175,6 @@ draw_middle_lines()
 {
   int line_separation = 10;
   int line_height = 20;
-  int width = GetScreenWidth();
-  int height = GetScreenHeight();
   for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
        y_dashed += (line_height + line_separation)) {
     DrawLine(GetScreenWidth() / 2,
@@ -245,21 +202,20 @@ main()
   InitWindow(screenWidth, screenHeight, "pong");
   SetWindowMinSize(screenWidth, screenHeight);
 
+  StartTimer(
+    &timer,
+    2); // TODO: Temporal fix. Will probably use frames later on, we'll see.
 #if defined(PLATFORM_WEB)
-  emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
+  emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
   SetTargetFPS(60); // Set our game to run at 60 frames-per-second
   //--------------------------------------------------------------------------------------
 
-  show_welcome_message();
-
   pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
   pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
   // Main game loop
-  bool has_game_ended = false;
-  while (!WindowShouldClose() // Detect window close button or ESC key
-         && !has_game_ended) {
-    has_game_ended = UpdateDrawFrame();
+  while (!WindowShouldClose()) { // Detect window close button or ESC key
+    UpdateDrawFrame();
   }
 #endif
 
@@ -272,69 +228,109 @@ main()
 }
 
 // Update and draw game frame
-static bool
+static void
 UpdateDrawFrame(void)
 {
-  if (new_round) {
-    if (counter_1 > '9' || counter_2 > '9') {
-      draw_centered_text("end of game!", 30, 0, 0);
-      Timer timer;
-      StartTimer(&timer, 2);
-      while (!TimerDone(timer)) {
+  // Update
+  //---------------------------------------------------------------------------
+  switch (current_screen) {
+    case TITLE: {
+      if (TimerDone(timer)) {
+        current_screen = INSTRUCTIONS;
+        StartTimer(&timer, 2);
       }
-      return true; // Game has ended
-    }
+    } break;
+    case INSTRUCTIONS: {
+      if (TimerDone(timer)) {
+        current_screen = GAMEPLAY;
+      }
+    } break;
+    case GAMEPLAY: {
+      if (new_round) {
+        if (counter_1 > '9' || counter_2 > '9') {
+          current_screen = ENDING;
+          StartTimer(&timer, 2);
+        }
 
-    ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
-    ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
+        ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
+        ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
 
-    // Set initial ball speed depending on round.
-    ball_speed.x = player_1_starts ? -6.0f : 6.0f;
-    ball_speed.y = GetRandomValue(-2, 2);
-    player_1_starts = !player_1_starts;
+        // Set initial ball speed depending on round.
+        ball_speed.x = player_1_starts ? -6.0f : 6.0f;
+        ball_speed.y = GetRandomValue(-2, 2);
+        player_1_starts = !player_1_starts;
 
-    new_round = false;
+        new_round = false;
+      }
+    } break;
+    case ENDING: {
+      if (TimerDone(timer)) {
+        current_screen = TITLE;
+      }
+    } break;
+    default:
+      break;
   }
+  //----------------------------------------------------------------------------------
 
   // Draw
   //----------------------------------------------------------------------------------
   BeginDrawing();
   {
     ClearBackground(BLACK);
+    switch (current_screen) {
+      case TITLE: {
+        draw_centered_text("pong!", 30, 0, 0);
+        draw_centered_text("programmed by L T", 20, 0, 50);
+        draw_centered_text("powered by raylib", 20, 0, 150);
+      } break;
+      case INSTRUCTIONS: {
+        draw_centered_text("Instructions", 30, 0, -150);
+        draw_centered_text("Move up and down with", 30, 0, -50);
+        draw_centered_text("Player 1: q-a", 30, 0, 0);
+        draw_centered_text("Player 2: p-l", 30, 0, 50);
+        draw_centered_text("First to score 9 wins", 30, 0, 200);
+      } break;
+      case GAMEPLAY: {
+        DrawFPS(10, 10);
+        draw_counters();
+        draw_middle_lines();
 
-    DrawFPS(10, 10);
-    draw_counters();
-    draw_middle_lines();
+        ball.x += ball_speed.x;
+        ball.y -= ball_speed.y;
 
-    ball.x += ball_speed.x;
-    ball.y -= ball_speed.y;
+        handle_keyboard_input();
 
-    handle_keyboard_input();
+        handle_collisions(&ball, &pallet_1, PALLET_LEFT);
+        handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
 
-    handle_collisions(&ball, &pallet_1, PALLET_LEFT);
-    handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
+        if (ball.y < 0) {
+          ball.y = 0;
+          ball_speed.y = -ball_speed.y;
+        } else if (ball.y + ball.height > GetScreenHeight()) {
+          ball.y = GetScreenHeight() - ball.height;
+          ball_speed.y = -ball_speed.y;
+        }
 
-    if (ball.y < 0) {
-      ball.y = 0;
-      ball_speed.y = -ball_speed.y;
-    } else if (ball.y + ball.height > GetScreenHeight()) {
-      ball.y = GetScreenHeight() - ball.height;
-      ball_speed.y = -ball_speed.y;
+        if (ball.x + ball.width < 0) {
+          ++counter_2;
+          new_round = true;
+        } else if (ball.x > GetScreenWidth()) {
+          ++counter_1;
+          new_round = true;
+        }
+
+        DrawRectangleRec(ball, WHITE);
+        DrawRectangleRec(pallet_1, WHITE);
+        DrawRectangleRec(pallet_2, WHITE);
+      } break;
+      case ENDING: {
+        draw_centered_text("end of game!", 30, 0, 0);
+      } break;
+      default:
+        break;
     }
-
-    if (ball.x + ball.width < 0) {
-      ++counter_2;
-      new_round = true;
-    } else if (ball.x > GetScreenWidth()) {
-      ++counter_1;
-      new_round = true;
-    }
-
-    DrawRectangleRec(ball, WHITE);
-    DrawRectangleRec(pallet_1, WHITE);
-    DrawRectangleRec(pallet_2, WHITE);
   }
   EndDrawing();
   //----------------------------------------------------------------------------------
-  return false;
 }
