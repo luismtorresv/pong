@@ -17,8 +17,8 @@ Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 10, .height = 10 };
 const Vector2 max_speed = { 100.0, 140.0 };
 const float pallet_vertical_speed = 5.0f;
 
-char counter_1 = '0';
-char counter_2 = '0';
+int counter_1 = 0;
+int counter_2 = 0;
 bool new_round = true;
 bool player_1_starts = true;
 
@@ -160,14 +160,11 @@ handle_keyboard_input()
 static void
 draw_counters()
 {
-  Font font = GetFontDefault();
   int font_size = 30;
   int y_pos = 40;
   float width = GetScreenWidth();
-  DrawTextCodepoint(
-    font, counter_1, (Vector2){ width * 1 / 4, y_pos }, font_size, WHITE);
-  DrawTextCodepoint(
-    font, counter_2, (Vector2){ width * 3 / 4, y_pos }, font_size, WHITE);
+  DrawText(TextFormat("%d", counter_1), width * 1 / 4, y_pos, font_size, WHITE);
+  DrawText(TextFormat("%d", counter_2), width * 3 / 4, y_pos, font_size, WHITE);
 }
 
 static void
@@ -247,7 +244,7 @@ UpdateDrawFrame(void)
     } break;
     case GAMEPLAY: {
       if (new_round) {
-        if (counter_1 > '9' || counter_2 > '9') {
+        if (counter_1 >= 9 || counter_2 >= 9) {
           current_screen = ENDING;
           StartTimer(&timer, 2);
         }
