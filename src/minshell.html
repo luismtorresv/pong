@@ -33,9 +33,18 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="https:///favicon.ico">
     <style>
-        body { 
-          margin: 0px; 
-          overflow: hidden; 
+        html {
+            display: flex;
+            justify-content: center;
+        }
+        h1 {
+            font-family: Consolas, "Courier New", "Andale Mono", Monaco, monospace;
+            color: white;
+            text-align: center;
+        }
+        body {
+          margin: 0px;
+          overflow: hidden;
           background-color: black;
         }
         canvas.emscripten {
@@ -68,6 +77,7 @@
     </script>
     </head>
     <body>
+        <h1>pong!</h1>
         <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
         <p id="output" />
         <script>
