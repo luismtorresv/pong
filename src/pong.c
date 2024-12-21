@@ -277,16 +277,16 @@ UpdateDrawFrame(void)
     ClearBackground(BLACK);
     switch (current_screen) {
       case TITLE: {
-        draw_centered_text("pong!", 30, 0, 0);
-        draw_centered_text("programmed by L T", 20, 0, 50);
-        draw_centered_text("powered by raylib", 20, 0, 150);
+        draw_centered_text("pong!", 30, 0, -50);
+        draw_centered_text("programmed by L T", 20, 0, 0);
+        draw_centered_text("powered by raylib", 20, 0, 50);
       } break;
       case INSTRUCTIONS: {
         draw_centered_text("Instructions", 30, 0, -150);
         draw_centered_text("Move up and down with", 30, 0, -50);
-        draw_centered_text("Player 1: q-a", 30, 0, 0);
-        draw_centered_text("Player 2: p-l", 30, 0, 50);
-        draw_centered_text("First to score 9 wins", 30, 0, 200);
+        draw_centered_text("Player 1: Q and A", 30, 0, 0);
+        draw_centered_text("Player 2: P and L", 30, 0, 50);
+        draw_centered_text("First to score 9 wins", 30, 0, 100);
       } break;
       case GAMEPLAY: {
         DrawFPS(10, 10);
@@ -322,7 +322,12 @@ UpdateDrawFrame(void)
         DrawRectangleRec(pallet_2, WHITE);
       } break;
       case ENDING: {
-        draw_centered_text("end of game!", 30, 0, 0);
+        draw_centered_text("end of game!", 30, 0, -50);
+        draw_centered_text(
+          TextFormat("Player %d wins!", counter_1 > counter_2 ? 1 : 2),
+          50,
+          0,
+          0);
       } break;
       default:
         break;
