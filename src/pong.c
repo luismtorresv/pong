@@ -263,6 +263,9 @@ UpdateDrawFrame(void)
     case ENDING: {
       if (TimerDone(timer)) {
         current_screen = TITLE;
+        StartTimer(&timer, 2);
+        counter_1 = counter_2 = 0;
+        new_round = player_1_starts = true;
       }
     } break;
     default:
