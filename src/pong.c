@@ -27,6 +27,8 @@ Vector2 ball_speed = { 0.0f, 0.0f };
 GameScreen current_screen = TITLE;
 Timer timer;
 
+Sound start_sound, hit_sound, score_sound, end_sound;
+
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
 //----------------------------------------------------------------------------------
@@ -92,6 +94,8 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 
     // Bump.
     ball_speed.x = -ball_speed.x;
+
+    PlaySound(hit_sound);
   }
 }
 
@@ -199,9 +203,18 @@ main()
   InitWindow(screenWidth, screenHeight, "pong");
   SetWindowMinSize(screenWidth, screenHeight);
 
+  InitAudioDevice();
+
+  start_sound = LoadSound("resources/start.ogg");
+  hit_sound = LoadSound("resources/hit.ogg");
+  score_sound = LoadSound("resources/score.ogg");
+  SetSoundVolume(score_sound, 0.5);
+  end_sound = LoadSound("resources/end.ogg");
+
   StartTimer(
     &timer,
     2); // TODO: Temporal fix. Will probably use frames later on, we'll see.
+  PlaySound(start_sound);
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
@@ -218,6 +231,11 @@ main()
 
   // De-Initialization
   //--------------------------------------------------------------------------------------
+  UnloadSound(start_sound);
+  UnloadSound(hit_sound);
+  UnloadSound(score_sound);
+  UnloadSound(end_sound);
+  CloseAudioDevice();
   CloseWindow(); // Close window and OpenGL context
   //--------------------------------------------------------------------------------------
 
@@ -244,9 +262,15 @@ UpdateDrawFrame(void)
     } break;
     case GAMEPLAY: {
       if (new_round) {
-        if (counter_1 >= 9 || counter_2 >= 9) {
+        bool initial_round = counter_1 == 0 && counter_2 == 0;
+        bool final_round = counter_1 >= 9 || counter_2 >= 9;
+
+        if (final_round) {
           current_screen = ENDING;
           StartTimer(&timer, 2);
+          PlaySound(end_sound);
+        } else if (!initial_round) {
+          PlaySound(score_sound);
         }
 
         ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
