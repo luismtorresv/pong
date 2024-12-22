@@ -278,11 +278,13 @@ UpdateDrawFrame(void)
         }
 
         ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
-        ball.y = (float)GetScreenHeight() / 2 - ball.height / 2;
+        ball.y = GetRandomValue(0, 1) ? (float)GetScreenHeight() : 0;
 
         // Set initial ball speed depending on round.
         ball_speed.x = player_1_starts ? -6.0f : 6.0f;
-        ball_speed.y = GetRandomValue(-2, 2);
+        ball_speed.y = ball.y == (float)GetScreenHeight()
+                         ? GetRandomValue(2, 4)
+                         : GetRandomValue(-2, -4);
         player_1_starts = !player_1_starts;
 
         new_round = false;
