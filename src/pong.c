@@ -9,10 +9,9 @@
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-Rectangle pallet_1 = (Rectangle){ .x = 10, .y = 0, .width = 20, .height = 100 };
-Rectangle pallet_2 =
-  (Rectangle){ .x = 770, .y = 0, .width = 20, .height = 100 };
-Rectangle ball = (Rectangle){ .x = 0, .y = 0, .width = 10, .height = 10 };
+Rectangle pallet_1 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
+Rectangle pallet_2 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
+Rectangle ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
 
 const Vector2 max_speed = { 100.0, 140.0 };
 const float pallet_vertical_speed = 5.0f;
@@ -197,8 +196,8 @@ main()
   SetRandomSeed(671);
   SetTraceLogLevel(LOG_ALL);
 
-  const int screenWidth = 800;
-  const int screenHeight = 450;
+  const int screenWidth = 1000;
+  const int screenHeight = 600;
 
   InitWindow(screenWidth, screenHeight, "pong");
   SetWindowMinSize(screenWidth, screenHeight);
@@ -211,18 +210,23 @@ main()
   SetSoundVolume(score_sound, 0.5);
   end_sound = LoadSound("resources/end.ogg");
 
+  pallet_1.x = PALLET_HORIZONTAL_SEPARATION;
+  pallet_1.y = (float)screenHeight / 2 - pallet_1.height / 2;
+
+  pallet_2.x = screenWidth - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
+  pallet_2.y = (float)screenHeight / 2 - pallet_2.height / 2;
+
   StartTimer(
     &timer,
     2); // TODO: Temporal fix. Will probably use frames later on, we'll see.
   PlaySound(start_sound);
+
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
   SetTargetFPS(60); // Set our game to run at 60 frames-per-second
   //--------------------------------------------------------------------------------------
 
-  pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
-  pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
   // Main game loop
   while (!WindowShouldClose()) { // Detect window close button or ESC key
     UpdateDrawFrame();

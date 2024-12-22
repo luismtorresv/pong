@@ -8,6 +8,10 @@
 #define PALLET_LEFT 1
 #define PALLET_RIGHT 2
 
+#define PALLET_WIDTH 20
+#define PALLET_HEIGHT 100
+#define PALLET_HORIZONTAL_SEPARATION 100
+
 typedef enum GameScreen
 {
   TITLE = 0,
