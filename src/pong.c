@@ -42,10 +42,10 @@ StartTimer(Timer* timer, double lifetime)
 static bool
 TimerDone(Timer timer)
 {
-  return GetTime() - timer.startTime >= timer.lifeTime;
+  return GetElapsed(timer) >= timer.lifeTime;
 }
 
-static double
+inline static double
 GetElapsed(Timer timer)
 {
   return GetTime() - timer.startTime;

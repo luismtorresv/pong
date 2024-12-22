@@ -22,6 +22,9 @@ typedef struct Timer
   double lifeTime;  // Lifetime (seconds)
 } Timer;
 
+inline static double
+GetElapsed(Timer timer);
+
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
