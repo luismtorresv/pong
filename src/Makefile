@@ -327,6 +327,10 @@ $(PROJECT_NAME): $(OBJS)
 %.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
+# Format source files (my addition)
+format: pong.c pong.h
+	clang-format --style=Mozilla -i --Werror $^
+
 # Clean everything
 clean:
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
