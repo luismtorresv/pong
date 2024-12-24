@@ -1,6 +1,9 @@
 #include "raylib.h"
 #include "raymath.h"
 
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
+
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
@@ -14,7 +17,8 @@
 
 typedef enum GameScreen
 {
-  TITLE = 0,
+  START = 0,
+  TITLE,
   INSTRUCTIONS,
   GAMEPLAY,
   ENDING

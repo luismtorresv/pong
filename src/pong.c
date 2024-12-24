@@ -23,10 +23,11 @@ bool player_1_starts = true;
 
 Vector2 ball_speed = { 0.0f, 0.0f };
 
-GameScreen current_screen = TITLE;
+GameScreen current_screen = START;
 Timer timer;
 
 Sound start_sound, hit_sound, score_sound, end_sound;
+bool can_init_sound = false;
 
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
@@ -200,26 +201,14 @@ main()
   const int screenHeight = 600;
 
   InitWindow(screenWidth, screenHeight, "pong");
+  GuiLoadStyle("resources/style_terminal.rgs");
   SetWindowMinSize(screenWidth, screenHeight);
-
-  InitAudioDevice();
-
-  start_sound = LoadSound("resources/start.ogg");
-  hit_sound = LoadSound("resources/hit.ogg");
-  score_sound = LoadSound("resources/score.ogg");
-  SetSoundVolume(score_sound, 0.5);
-  end_sound = LoadSound("resources/end.ogg");
 
   pallet_1.x = PALLET_HORIZONTAL_SEPARATION;
   pallet_1.y = (float)screenHeight / 2 - pallet_1.height / 2;
 
   pallet_2.x = screenWidth - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
   pallet_2.y = (float)screenHeight / 2 - pallet_2.height / 2;
-
-  StartTimer(
-    &timer,
-    2); // TODO: Temporal fix. Will probably use frames later on, we'll see.
-  PlaySound(start_sound);
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -253,6 +242,21 @@ UpdateDrawFrame(void)
   // Update
   //---------------------------------------------------------------------------
   switch (current_screen) {
+    case START: {
+      if (can_init_sound) {
+        InitAudioDevice();
+        start_sound = LoadSound("resources/start.ogg");
+        hit_sound = LoadSound("resources/hit.ogg");
+        score_sound = LoadSound("resources/score.ogg");
+        SetSoundVolume(score_sound, 0.5);
+        end_sound = LoadSound("resources/end.ogg");
+        PlaySound(start_sound);
+        StartTimer(&timer,
+                   2); // TODO: Temporal fix. Will probably use frames later on,
+                       // we'll see.
+        current_screen = TITLE;
+      }
+    } break;
     case TITLE: {
       if (TimerDone(timer)) {
         current_screen = INSTRUCTIONS;
@@ -309,6 +313,15 @@ UpdateDrawFrame(void)
   {
     ClearBackground(BLACK);
     switch (current_screen) {
+      case START: {
+        if (GuiButton((Rectangle){ ((float)GetScreenWidth() - 200.0) / 2,
+                                   ((float)GetScreenHeight() - 50.0) / 2,
+                                   200.0,
+                                   50.0 },
+                      "#131#Click to start game")) {
+          can_init_sound = true;
+        };
+      } break;
       case TITLE: {
         draw_centered_text("pong!", 30, 0, -50);
         draw_centered_text("programmed by L T", 20, 0, 0);
