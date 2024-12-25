@@ -32,7 +32,7 @@ PLATFORM              ?= PLATFORM_DESKTOP
 PROJECT_NAME          ?= pong
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= .
-PROJECT_SOURCE_FILES  ?= pong.c
+PROJECT_SOURCE_FILES  ?= pong.c pallet.c
 
 RAYLIB_SRC_PATH       ?= $(HOME)/raylib/src/
 RAYLIB_INCLUDE_PATH   ?= $(RAYLIB_SRC_PATH)
@@ -328,7 +328,7 @@ $(PROJECT_NAME): $(OBJS)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Format source files (my addition)
-format: pong.c pong.h
+format: $(PROJECT_SOURCE_FILES) $(patsubst %.c, %.h, $(PROJECT_SOURCE_FILES))
 	clang-format --style=Mozilla -i --Werror $^
 
 # Clean everything

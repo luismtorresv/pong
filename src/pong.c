@@ -5,6 +5,14 @@
  ********************************************************************************************/
 
 #include "pong.h"
+#include "pallet.h"
+
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
+
+#if defined(PLATFORM_WEB)
+#include <emscripten/emscripten.h>
+#endif
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -148,17 +156,20 @@ static void
 handle_keyboard_input()
 {
   // Player 1.
-  if (IsKeyDown(KEY_Q) && pallet_1.y >= 0)
-    pallet_1.y -= pallet_vertical_speed; // Paradoxical, but that's the way
-                                         // the coordinate system works.
-  if (IsKeyDown(KEY_A) && (pallet_1.y + pallet_1.height) <= GetScreenHeight())
-    pallet_1.y += pallet_vertical_speed;
+  if (IsKeyDown(KEY_Q))
+    move_pallet_up(&pallet_1);
+  if (IsKeyDown(KEY_A))
+    move_pallet_down(&pallet_1);
 
   // Player 2.
-  if (IsKeyDown(KEY_P) && pallet_2.y >= 0)
-    pallet_2.y -= pallet_vertical_speed;
-  if (IsKeyDown(KEY_L) && (pallet_2.y + pallet_2.height) <= GetScreenHeight())
-    pallet_2.y += pallet_vertical_speed;
+  if (IsKeyDown(KEY_P))
+    move_pallet_up(&pallet_2);
+  if (IsKeyDown(KEY_L))
+    move_pallet_down(&pallet_2);
+
+  // TODO: Create single-player mode.
+  /* move_pallet_2_towards(ball_speed.x > 0 ? ball.y : (float)GetScreenHeight()
+   * / 2); */
 }
 
 static void

@@ -1,12 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
-
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
-
-#if defined(PLATFORM_WEB)
-#include <emscripten/emscripten.h>
-#endif
+#include "stdlib.h"
 
 #define PALLET_LEFT 1
 #define PALLET_RIGHT 2
