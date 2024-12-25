@@ -293,6 +293,30 @@ UpdateDrawFrame(void)
 
         new_round = false;
       }
+
+      ball.x += ball_speed.x;
+      ball.y -= ball_speed.y;
+
+      handle_keyboard_input();
+
+      handle_collisions(&ball, &pallet_1, PALLET_LEFT);
+      handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
+
+      if (ball.y < 0) {
+        ball.y = 0;
+        ball_speed.y = -ball_speed.y;
+      } else if (ball.y + ball.height > GetScreenHeight()) {
+        ball.y = GetScreenHeight() - ball.height;
+        ball_speed.y = -ball_speed.y;
+      }
+
+      if (ball.x + ball.width < 0) {
+        ++counter_2;
+        new_round = true;
+      } else if (ball.x > GetScreenWidth()) {
+        ++counter_1;
+        new_round = true;
+      }
     } break;
     case ENDING: {
       if (TimerDone(timer)) {
@@ -338,31 +362,6 @@ UpdateDrawFrame(void)
         DrawFPS(10, 10);
         draw_counters();
         draw_middle_lines();
-
-        ball.x += ball_speed.x;
-        ball.y -= ball_speed.y;
-
-        handle_keyboard_input();
-
-        handle_collisions(&ball, &pallet_1, PALLET_LEFT);
-        handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
-
-        if (ball.y < 0) {
-          ball.y = 0;
-          ball_speed.y = -ball_speed.y;
-        } else if (ball.y + ball.height > GetScreenHeight()) {
-          ball.y = GetScreenHeight() - ball.height;
-          ball_speed.y = -ball_speed.y;
-        }
-
-        if (ball.x + ball.width < 0) {
-          ++counter_2;
-          new_round = true;
-        } else if (ball.x > GetScreenWidth()) {
-          ++counter_1;
-          new_round = true;
-        }
-
         DrawRectangleRec(ball, WHITE);
         DrawRectangleRec(pallet_1, WHITE);
         DrawRectangleRec(pallet_2, WHITE);
