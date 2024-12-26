@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>pong.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com..pong</string>
+	<string>com.random.pong</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -23,7 +23,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>10.12</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright (c) 2024 </string>
+	<string>Copyright (c) 2024 lmtorresv</string>
     <key>CFBundleSignature</key>
     <string>????</string>
 </dict>
