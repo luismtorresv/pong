@@ -2,41 +2,28 @@
 
 ### Description
 
-Recreation of shared-screen Pong.
-
-### Features
-
- - $(Project Feature 01)
- - $(Project Feature 02)
- - $(Project Feature 03)
+Recreation of the Atari classic "Pong", with single-player and shared-screen modes.
 
 ### Controls
 
-Keyboard/Mouse:
- - $(project Control 01)
- - $(project Control 02)
- - $(project Control 03)
+To move up and down:
+
+- Player 1: Up and Down (also Q and A, respectively)
+
+- Player 2: P and L
 
 ### Screenshots
 
-_TODO: Show your game to the world, animated GIFs recommended!._
+![Demo](recordings/demo.mp4)
 
 ### Developers
 
- - $(Developer 01) - $(Role/Tasks Developed)
- - $(Developer 02) - $(Role/Tasks Developed)
- - $(Developer 03) - $(Role/Tasks Developed)
-
-### Links
-
- - YouTube Gameplay: $(YouTube Link)
- - itch.io Release: $(itch.io Game Page)
- - Steam Release: $(Steam Game Page)
+- Luis Torres
 
 ### License
 
-This project sources are licensed under an unmodified zlib/libpng license, which is an OSI-certified, BSD-like license that allows static linking with closed source software. Check [LICENSE](LICENSE) for further details.
+This project sources are licensed under an unmodified zlib/libpng license,
+which is an OSI-certified, BSD-like license that allows static linking with
+closed source software. Check [LICENSE](LICENSE) for further details.
 
-$(Additional Licenses)
-
-*Copyright (c) 2024  ($(User Twitter/GitHub Name))*
+*Copyright (c) 2024  (lmtorresv)*
