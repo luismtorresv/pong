@@ -19,6 +19,9 @@
 #
 #     3. This notice may not be removed or altered from any source distribution.
 #
+#   Modified:
+#
+#   1. Since October 2024, by lmtorresv
 #**************************************************************************************************
 
 .PHONY: all clean
