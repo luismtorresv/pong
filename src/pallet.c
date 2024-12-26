@@ -7,6 +7,7 @@
 extern Rectangle pallet_1;
 extern Rectangle pallet_2;
 extern const float pallet_vertical_speed;
+extern int ai_error_offset;
 
 //----------------------------------------------------------------------------------
 // Move a pallet without overflowing.
@@ -17,7 +18,7 @@ ai_move_pallet(Rectangle* pallet, int desired_y)
   int middle_of_pallet = pallet->y + pallet->height / 2;
   if (middle_of_pallet < desired_y) {
     move_pallet_down(pallet);
-  } else {
+  } else if (middle_of_pallet > desired_y) {
     move_pallet_up(pallet);
   }
 }
@@ -44,11 +45,11 @@ move_pallet_down(Rectangle* pallet)
 void
 move_pallet_2_towards(int y)
 {
-  const int tolerance = 5;
+  const int tolerance = 10;
   bool within_tolerance =
-    abs((int)(pallet_2.y + pallet_2.height / 2 - y)) > tolerance;
+    abs((int)(pallet_2.y + pallet_2.height / 2 - y)) < tolerance;
 
-  if (within_tolerance) {
-    ai_move_pallet(&pallet_2, y);
+  if (!within_tolerance) {
+    ai_move_pallet(&pallet_2, y + ai_error_offset);
   }
 }

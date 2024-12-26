@@ -37,6 +37,15 @@ Timer timer;
 Sound start_sound, hit_sound, score_sound, end_sound;
 bool can_init_sound = false;
 
+int ai_error_offset;
+
+static void
+update_ai_error_offset()
+{
+  int half_amplitude = PALLET_HEIGHT / 2 + 5;
+  ai_error_offset = GetRandomValue(-half_amplitude, half_amplitude);
+}
+
 //----------------------------------------------------------------------------------
 // Ad hoc implementation of a timer from the wiki
 //----------------------------------------------------------------------------------
@@ -104,6 +113,9 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
     ball_speed.x = -ball_speed.x;
 
     PlaySound(hit_sound);
+
+    update_ai_error_offset();
+    TraceLog(LOG_DEBUG, "ai_error_offset: %d", ai_error_offset);
   }
 }
 
@@ -156,20 +168,22 @@ static void
 handle_keyboard_input()
 {
   // Player 1.
-  if (IsKeyDown(KEY_Q))
+  if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
     move_pallet_up(&pallet_1);
-  if (IsKeyDown(KEY_A))
+  if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
     move_pallet_down(&pallet_1);
 
   // Player 2.
-  if (IsKeyDown(KEY_P))
-    move_pallet_up(&pallet_2);
-  if (IsKeyDown(KEY_L))
-    move_pallet_down(&pallet_2);
+  /* if (IsKeyDown(KEY_P)) */
+  /*   move_pallet_up(&pallet_2); */
+  /* if (IsKeyDown(KEY_L)) */
+  /*   move_pallet_down(&pallet_2); */
 
   // TODO: Create single-player mode.
-  /* move_pallet_2_towards(ball_speed.x > 0 ? ball.y : (float)GetScreenHeight()
-   * / 2); */
+  if (ball_speed.x > 0)
+    move_pallet_2_towards(ball.y);
+  else
+    ai_move_pallet(&pallet_2, (float)GetScreenHeight() / 2);
 }
 
 static void
@@ -205,7 +219,6 @@ main()
 {
   // Initialization
   //--------------------------------------------------------------------------------------
-  SetRandomSeed(671);
   SetTraceLogLevel(LOG_ALL);
 
   const int screenWidth = 1000;
@@ -220,6 +233,8 @@ main()
 
   pallet_2.x = screenWidth - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
   pallet_2.y = (float)screenHeight / 2 - pallet_2.height / 2;
+
+  update_ai_error_offset();
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -364,9 +379,9 @@ UpdateDrawFrame(void)
       } break;
       case INSTRUCTIONS: {
         draw_centered_text("Instructions", 30, 0, -150);
-        draw_centered_text("Move up and down with", 30, 0, -50);
-        draw_centered_text("Player 1: Q and A", 30, 0, 0);
-        draw_centered_text("Player 2: P and L", 30, 0, 50);
+        draw_centered_text("Move with UP and DOWN", 30, 0, -50);
+        /* draw_centered_text("Player 1: Q and A", 30, 0, 0); */
+        /* draw_centered_text("Player 2: P and L", 30, 0, 50); */
         draw_centered_text("First to score 9 wins", 30, 0, 100);
       } break;
       case GAMEPLAY: {

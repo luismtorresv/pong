@@ -12,3 +12,6 @@ move_pallet_down(Rectangle* pallet);
 
 void
 move_pallet_2_towards(int y);
+
+void
+ai_move_pallet(Rectangle* pallet, int desired_y);
