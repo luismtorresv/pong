@@ -35,7 +35,13 @@ PLATFORM              ?= PLATFORM_DESKTOP
 PROJECT_NAME          ?= pong
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= .
-PROJECT_SOURCE_FILES  ?= pong.c pallet.c
+PROJECT_SOURCE_FILES  ?= \
+	pong.c pallet.c \
+	screen_ending.c \
+	screen_gameplay.c \
+	screen_instructions.c \
+	screen_start.c \
+	screen_title.c \
 
 RAYLIB_SRC_PATH       ?= $(HOME)/raylib/src/
 RAYLIB_INCLUDE_PATH   ?= $(RAYLIB_SRC_PATH)
