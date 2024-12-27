@@ -21,7 +21,7 @@
 #
 #   Modified:
 #
-#   1. Since October 2024, by lmtorresv
+#   1. Since October 2024, by luismtorresv
 #**************************************************************************************************
 
 .PHONY: all clean
