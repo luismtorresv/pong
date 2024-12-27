@@ -13,7 +13,8 @@ static Sound end_sound;
 //----------------------------------------------------------------------------------
 
 // Ending Screen Initialization logic
-void InitEndingScreen(void)
+void
+InitEndingScreen(void)
 {
     framesCounter = 0;
     finishScreen = 0;
@@ -22,33 +23,34 @@ void InitEndingScreen(void)
 }
 
 // Ending Screen Update logic
-void UpdateEndingScreen(void)
+void
+UpdateEndingScreen(void)
 {
-  if (TimerDone(timer)) {
-    StartTimer(&timer, 2);
-    finishScreen = 1;
-  }
+    if (TimerDone(timer)) {
+        StartTimer(&timer, 2);
+        finishScreen = 1;
+    }
 }
 
 // Ending Screen Draw logic
-void DrawEndingScreen(void)
+void
+DrawEndingScreen(void)
 {
-  draw_centered_text("end of game!", 30, 0, -50);
-  draw_centered_text(
-      TextFormat("Player %d wins!", counter_1 > counter_2 ? 1 : 2),
-      50,
-      0,
-      0);
+    draw_centered_text("end of game!", 30, 0, -50);
+    draw_centered_text(
+      TextFormat("Player %d wins!", counter_1 > counter_2 ? 1 : 2), 50, 0, 0);
 }
 
 // Ending Screen Unload logic
-void UnloadEndingScreen(void)
+void
+UnloadEndingScreen(void)
 {
-  UnloadSound(end_sound);
+    UnloadSound(end_sound);
 }
 
 // Ending Screen should finish?
-int FinishEndingScreen(void)
+int
+FinishEndingScreen(void)
 {
     return finishScreen;
 }

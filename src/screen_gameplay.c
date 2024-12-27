@@ -1,6 +1,6 @@
+#include "pallet.h"
 #include "raylib.h"
 #include "screens.h"
-#include "pallet.h"
 
 #define PALLET_LEFT 1
 #define PALLET_RIGHT 2
@@ -60,7 +60,8 @@ draw_middle_lines();
 //----------------------------------------------------------------------------------
 
 // Gameplay Screen Initialization logic
-void InitGameplayScreen(void)
+void
+InitGameplayScreen(void)
 {
     framesCounter = 0;
     finishScreen = 0;
@@ -82,18 +83,19 @@ void InitGameplayScreen(void)
 }
 
 // Gameplay Screen Update logic
-void UpdateGameplayScreen(void)
+void
+UpdateGameplayScreen(void)
 {
-      if (new_round) {
+    if (new_round) {
         bool initial_round = counter_1 == 0 && counter_2 == 0;
         bool final_round = counter_1 >= 9 || counter_2 >= 9;
 
         if (final_round) {
-          finishScreen = 1;
-          StartTimer(&timer, 2);
-          return;
+            finishScreen = 1;
+            StartTimer(&timer, 2);
+            return;
         } else if (!initial_round) {
-          PlaySound(score_sound);
+            PlaySound(score_sound);
         }
 
         ball.x = (float)GetScreenWidth() / 2 - ball.width / 2;
@@ -107,53 +109,56 @@ void UpdateGameplayScreen(void)
         player_1_starts = !player_1_starts;
 
         new_round = false;
-      }
+    }
 
-      ball.x += ball_speed.x;
-      ball.y -= ball_speed.y;
+    ball.x += ball_speed.x;
+    ball.y -= ball_speed.y;
 
-      handle_keyboard_input();
+    handle_keyboard_input();
 
-      handle_collisions(&ball, &pallet_1, PALLET_LEFT);
-      handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
+    handle_collisions(&ball, &pallet_1, PALLET_LEFT);
+    handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
 
-      if (ball.y < 0) {
+    if (ball.y < 0) {
         ball.y = 0;
         ball_speed.y = -ball_speed.y;
-      } else if (ball.y + ball.height > GetScreenHeight()) {
+    } else if (ball.y + ball.height > GetScreenHeight()) {
         ball.y = GetScreenHeight() - ball.height;
         ball_speed.y = -ball_speed.y;
-      }
+    }
 
-      if (ball.x + ball.width < 0) {
+    if (ball.x + ball.width < 0) {
         ++counter_2;
         new_round = true;
-      } else if (ball.x > GetScreenWidth()) {
+    } else if (ball.x > GetScreenWidth()) {
         ++counter_1;
         new_round = true;
-      }
+    }
 }
 
 // Gameplay Screen Draw logic
-void DrawGameplayScreen(void)
+void
+DrawGameplayScreen(void)
 {
-        DrawFPS(10, 10);
-        draw_counters();
-        draw_middle_lines();
-        DrawRectangleRec(ball, WHITE);
-        DrawRectangleRec(pallet_1, WHITE);
-        DrawRectangleRec(pallet_2, WHITE);
+    DrawFPS(10, 10);
+    draw_counters();
+    draw_middle_lines();
+    DrawRectangleRec(ball, WHITE);
+    DrawRectangleRec(pallet_1, WHITE);
+    DrawRectangleRec(pallet_2, WHITE);
 }
 
 // Gameplay Screen Unload logic
-void UnloadGameplayScreen(void)
+void
+UnloadGameplayScreen(void)
 {
     UnloadSound(hit_sound);
     UnloadSound(score_sound);
 }
 
 // Gameplay Screen should finish?
-int FinishGameplayScreen(void)
+int
+FinishGameplayScreen(void)
 {
     return finishScreen;
 }
@@ -164,48 +169,50 @@ int FinishGameplayScreen(void)
 static void
 handle_keyboard_input()
 {
-  // Player 1.
-  if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
-    move_pallet_up(&pallet_1);
-  if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
-    move_pallet_down(&pallet_1);
+    // Player 1.
+    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
+        move_pallet_up(&pallet_1);
+    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
+        move_pallet_down(&pallet_1);
 
-  // Player 2.
-  /* if (IsKeyDown(KEY_P)) */
-  /*   move_pallet_up(&pallet_2); */
-  /* if (IsKeyDown(KEY_L)) */
-  /*   move_pallet_down(&pallet_2); */
+    // Player 2.
+    /* if (IsKeyDown(KEY_P)) */
+    /*   move_pallet_up(&pallet_2); */
+    /* if (IsKeyDown(KEY_L)) */
+    /*   move_pallet_down(&pallet_2); */
 
-  // TODO: Create single-player mode.
-  if (ball_speed.x > 0)
-    move_pallet_2_towards(ball.y);
-  else
-    ai_move_pallet(&pallet_2, (float)GetScreenHeight() / 2);
+    // TODO: Create single-player mode.
+    if (ball_speed.x > 0)
+        move_pallet_2_towards(ball.y);
+    else
+        ai_move_pallet(&pallet_2, (float)GetScreenHeight() / 2);
 }
 
 static void
 draw_counters()
 {
-  int font_size = 30;
-  int y_pos = 40;
-  float width = GetScreenWidth();
-  DrawText(TextFormat("%d", counter_1), width * 1 / 4, y_pos, font_size, WHITE);
-  DrawText(TextFormat("%d", counter_2), width * 3 / 4, y_pos, font_size, WHITE);
+    int font_size = 30;
+    int y_pos = 40;
+    float width = GetScreenWidth();
+    DrawText(
+      TextFormat("%d", counter_1), width * 1 / 4, y_pos, font_size, WHITE);
+    DrawText(
+      TextFormat("%d", counter_2), width * 3 / 4, y_pos, font_size, WHITE);
 }
 
 static void
 draw_middle_lines()
 {
-  int line_separation = 10;
-  int line_height = 20;
-  for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
-       y_dashed += (line_height + line_separation)) {
-    DrawLine(GetScreenWidth() / 2,
-             y_dashed,
-             GetScreenWidth() / 2,
-             y_dashed + line_height,
-             WHITE);
-  }
+    int line_separation = 10;
+    int line_height = 20;
+    for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
+         y_dashed += (line_height + line_separation)) {
+        DrawLine(GetScreenWidth() / 2,
+                 y_dashed,
+                 GetScreenWidth() / 2,
+                 y_dashed + line_height,
+                 WHITE);
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -214,49 +221,49 @@ draw_middle_lines()
 static void
 handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 {
-  if (CheckCollisionRecs(*ball, *pallet)) {
-    Rectangle collision_rec = GetCollisionRec(*ball, *pallet);
-    /* TraceLog(LOG_DEBUG, */
-    /*          TextFormat("x=%f, y=%f, width=%f, height=%f", */
-    /*                     collision_rec.x, */
-    /*                     collision_rec.y, */
-    /*                     collision_rec.width, */
-    /*                     collision_rec.height)); */
+    if (CheckCollisionRecs(*ball, *pallet)) {
+        Rectangle collision_rec = GetCollisionRec(*ball, *pallet);
+        /* TraceLog(LOG_DEBUG, */
+        /*          TextFormat("x=%f, y=%f, width=%f, height=%f", */
+        /*                     collision_rec.x, */
+        /*                     collision_rec.y, */
+        /*                     collision_rec.width, */
+        /*                     collision_rec.height)); */
 
-    // Handle case where the ball hits from below.
-    /* if (collision_rec.width >= collision_rec.height) { */
-    /*   ball_speed.y = -ball_speed.y; */
-    /*   if (collision_rec.y < pallet->y + pallet->height / 2) */
-    /*     ball->y = pallet->y - ball->height; */
-    /*   else */
-    /*     ball->y = pallet->y + pallet->height; */
-    /* } */
+        // Handle case where the ball hits from below.
+        /* if (collision_rec.width >= collision_rec.height) { */
+        /*   ball_speed.y = -ball_speed.y; */
+        /*   if (collision_rec.y < pallet->y + pallet->height / 2) */
+        /*     ball->y = pallet->y - ball->height; */
+        /*   else */
+        /*     ball->y = pallet->y + pallet->height; */
+        /* } */
 
-    // Zero out velocity if the ball hits right in the middle of the pallet.
-    if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
-      ball_speed.y = 0;
-    else if (GetRandomValue(0, 1))
-      set_ball_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
-    else
-      set_ball_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
+        // Zero out velocity if the ball hits right in the middle of the pallet.
+        if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
+            ball_speed.y = 0;
+        else if (GetRandomValue(0, 1))
+            set_ball_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
+        else
+            set_ball_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
 
-    // Correct x position and increase horizontal velocity.
-    if (pallet_id == PALLET_LEFT) {
-      ball->x = pallet->x + pallet->width;
-      set_ball_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
-    } else {
-      ball->x = pallet->x - ball->width;
-      set_ball_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
+        // Correct x position and increase horizontal velocity.
+        if (pallet_id == PALLET_LEFT) {
+            ball->x = pallet->x + pallet->width;
+            set_ball_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
+        } else {
+            ball->x = pallet->x - ball->width;
+            set_ball_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
+        }
+
+        // Bump.
+        ball_speed.x = -ball_speed.x;
+
+        PlaySound(hit_sound);
+
+        update_ai_error_offset();
+        /* TraceLog(LOG_DEBUG, "ai_error_offset: %d", ai_error_offset); */
     }
-
-    // Bump.
-    ball_speed.x = -ball_speed.x;
-
-    PlaySound(hit_sound);
-
-    update_ai_error_offset();
-    /* TraceLog(LOG_DEBUG, "ai_error_offset: %d", ai_error_offset); */
-  }
 }
 
 //----------------------------------------------------------------------------------
@@ -265,16 +272,18 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 static void
 set_ball_speed(Vector2 new_ball_speed)
 {
-  /* TraceLog( */
-  /*   LOG_DEBUG, "new_ball_speed: %4f, %4f", new_ball_speed.x, new_ball_speed.y); */
-  ball_speed = Vector2Min(ball_speed, new_ball_speed);
-  /* TraceLog( */
-  /*   LOG_DEBUG, "actual new_ball_speed: %4f, %4f", ball_speed.x, ball_speed.y); */
+    /* TraceLog( */
+    /*   LOG_DEBUG, "new_ball_speed: %4f, %4f", new_ball_speed.x,
+     * new_ball_speed.y); */
+    ball_speed = Vector2Min(ball_speed, new_ball_speed);
+    /* TraceLog( */
+    /*   LOG_DEBUG, "actual new_ball_speed: %4f, %4f", ball_speed.x,
+     * ball_speed.y); */
 }
 
 static void
 update_ai_error_offset()
 {
-  int half_amplitude = PALLET_HEIGHT / 2 + 5;
-  ai_error_offset = GetRandomValue(-half_amplitude, half_amplitude);
+    int half_amplitude = PALLET_HEIGHT / 2 + 5;
+    ai_error_offset = GetRandomValue(-half_amplitude, half_amplitude);
 }

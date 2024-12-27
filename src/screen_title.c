@@ -13,7 +13,8 @@ static Sound start_sound;
 //----------------------------------------------------------------------------------
 
 // Title Screen Initialization logic
-void InitTitleScreen(void)
+void
+InitTitleScreen(void)
 {
     framesCounter = 0;
     finishScreen = 0;
@@ -22,30 +23,34 @@ void InitTitleScreen(void)
 }
 
 // Title Screen Update logic
-void UpdateTitleScreen(void)
+void
+UpdateTitleScreen(void)
 {
-  if (TimerDone(timer)) {
-    StartTimer(&timer, 2);
-    finishScreen = 1;
-  }
+    if (TimerDone(timer)) {
+        StartTimer(&timer, 2);
+        finishScreen = 1;
+    }
 }
 
 // Title Screen Draw logic
-void DrawTitleScreen(void)
+void
+DrawTitleScreen(void)
 {
-  draw_centered_text("pong!", 30, 0, -50);
-  draw_centered_text("programmed by L T", 20, 0, 0);
-  draw_centered_text("powered by raylib", 20, 0, 50);
+    draw_centered_text("pong!", 30, 0, -50);
+    draw_centered_text("programmed by L T", 20, 0, 0);
+    draw_centered_text("powered by raylib", 20, 0, 50);
 }
 
 // Title Screen Unload logic
-void UnloadTitleScreen(void)
+void
+UnloadTitleScreen(void)
 {
-  UnloadSound(start_sound);
+    UnloadSound(start_sound);
 }
 
 // Title Screen should finish?
-int FinishTitleScreen(void)
+int
+FinishTitleScreen(void)
 {
     return finishScreen;
 }

@@ -15,41 +15,41 @@ extern int ai_error_offset;
 void
 ai_move_pallet(Rectangle* pallet, int desired_y)
 {
-  int middle_of_pallet = pallet->y + pallet->height / 2;
-  if (middle_of_pallet < desired_y) {
-    move_pallet_down(pallet);
-  } else if (middle_of_pallet > desired_y) {
-    move_pallet_up(pallet);
-  }
+    int middle_of_pallet = pallet->y + pallet->height / 2;
+    if (middle_of_pallet < desired_y) {
+        move_pallet_down(pallet);
+    } else if (middle_of_pallet > desired_y) {
+        move_pallet_up(pallet);
+    }
 }
 
 void
 move_pallet_up(Rectangle* pallet)
 {
-  if (pallet->y - pallet_vertical_speed > 0)
-    pallet->y -= pallet_vertical_speed;
-  else
-    pallet->y = 0;
+    if (pallet->y - pallet_vertical_speed > 0)
+        pallet->y -= pallet_vertical_speed;
+    else
+        pallet->y = 0;
 }
 
 void
 move_pallet_down(Rectangle* pallet)
 {
-  int bottom_of_pallet = pallet->y + pallet->height;
-  if (bottom_of_pallet + pallet_vertical_speed < GetScreenHeight())
-    pallet->y += pallet_vertical_speed;
-  else
-    pallet->y = GetScreenHeight() - pallet->height;
+    int bottom_of_pallet = pallet->y + pallet->height;
+    if (bottom_of_pallet + pallet_vertical_speed < GetScreenHeight())
+        pallet->y += pallet_vertical_speed;
+    else
+        pallet->y = GetScreenHeight() - pallet->height;
 }
 
 void
 move_pallet_2_towards(int y)
 {
-  const int tolerance = 10;
-  bool within_tolerance =
-    abs((int)(pallet_2.y + pallet_2.height / 2 - y)) < tolerance;
+    const int tolerance = 10;
+    bool within_tolerance =
+      abs((int)(pallet_2.y + pallet_2.height / 2 - y)) < tolerance;
 
-  if (!within_tolerance) {
-    ai_move_pallet(&pallet_2, y + ai_error_offset);
-  }
+    if (!within_tolerance) {
+        ai_move_pallet(&pallet_2, y + ai_error_offset);
+    }
 }

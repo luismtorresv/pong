@@ -337,8 +337,8 @@ $(PROJECT_NAME): $(OBJS)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Format source files (my addition)
-format: $(PROJECT_SOURCE_FILES) $(patsubst %.c, %.h, $(PROJECT_SOURCE_FILES))
-	clang-format --style=Mozilla -i --Werror $^
+format: $(PROJECT_SOURCE_FILES) pallet.h screens.h
+	clang-format -i --Werror $^
 
 # Clean everything
 clean:
