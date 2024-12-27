@@ -18,7 +18,7 @@ InitTitleScreen(void)
 {
     framesCounter = 0;
     finishScreen = 0;
-    start_sound = LoadSound("resources/start.ogg");
+    start_sound = LoadSound("resources/screens/title/start.ogg");
     PlaySound(start_sound);
 }
 

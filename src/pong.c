@@ -44,7 +44,7 @@ main()
     SetTraceLogLevel(LOG_ALL);
 
     InitWindow(screenWidth, screenHeight, "pong");
-    GuiLoadStyle("resources/style_terminal.rgs");
+    GuiLoadStyle("resources/common/style_terminal.rgs");
     SetWindowMinSize(screenWidth, screenHeight);
 
     currentScreen = START;

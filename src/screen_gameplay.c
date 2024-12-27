@@ -77,8 +77,8 @@ InitGameplayScreen(void)
 
     update_ai_error_offset();
 
-    hit_sound = LoadSound("resources/hit.ogg");
-    score_sound = LoadSound("resources/score.ogg");
+    hit_sound = LoadSound("resources/screens/gameplay/hit.ogg");
+    score_sound = LoadSound("resources/screens/gameplay/score.ogg");
     SetSoundVolume(score_sound, 0.5);
 }
 

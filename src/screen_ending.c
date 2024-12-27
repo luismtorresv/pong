@@ -18,7 +18,7 @@ InitEndingScreen(void)
 {
     framesCounter = 0;
     finishScreen = 0;
-    end_sound = LoadSound("resources/end.ogg");
+    end_sound = LoadSound("resources/screens/ending/end.ogg");
     PlaySound(end_sound);
 }
 
