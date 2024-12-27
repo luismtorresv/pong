@@ -34,7 +34,8 @@ PLATFORM              ?= PLATFORM_DESKTOP
 # Define project variables
 PROJECT_NAME          ?= pong
 PROJECT_VERSION       ?= 1.0
-PROJECT_BUILD_PATH    ?= .
+PROJECT_BUILD_PATH    ?= ../build
+PROJECT_INTERMEDIATES_PATH ?= $(PROJECT_BUILD_PATH)/intermediates
 PROJECT_SOURCE_FILES  ?= \
 	pong.c pallet.c \
 	screen_ending.c \
@@ -319,12 +320,13 @@ endif
 
 # Define all object files from source files
 #------------------------------------------------------------------------------------------------
-OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
+OBJS = $(addprefix $(PROJECT_INTERMEDIATES_PATH)/,$(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES)))
 
 # Define processes to execute
 #------------------------------------------------------------------------------------------------
 # Default target entry
 all:
+	mkdir -p $(PROJECT_BUILD_PATH) $(PROJECT_INTERMEDIATES_PATH)
 	$(MAKE) $(PROJECT_NAME)
 
 # Project target defined by PROJECT_NAME
@@ -333,7 +335,7 @@ $(PROJECT_NAME): $(OBJS)
 
 # Compile source files
 # NOTE: This pattern will compile every module defined on $(OBJS)
-%.o: %.c
+$(PROJECT_INTERMEDIATES_PATH)/%.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Format source files (my addition)
