@@ -33,10 +33,6 @@
 #ifndef SCREENS_H
 #define SCREENS_H
 
-#include "helpers.h"
-
-#define FRAME_ADJUSTMENT (GetFrameTime() / (1.0f / 60.0f))
-
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------

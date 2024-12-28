@@ -7,6 +7,8 @@
 #define PALLET_HEIGHT 100
 #define PALLET_HORIZONTAL_SEPARATION 100
 
+#define FRAME_ADJUSTMENT (GetFrameTime() / (1.0f / 60.0f))
+
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------

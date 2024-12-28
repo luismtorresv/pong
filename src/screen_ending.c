@@ -1,3 +1,4 @@
+#include "helpers.h"
 #include "raylib.h"
 #include "screens.h"
 
