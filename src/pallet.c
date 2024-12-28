@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
+#include "screens.h"
 #include "stdlib.h"
 
 #include "pallet.h"
@@ -26,8 +27,9 @@ ai_move_pallet(Rectangle* pallet, int desired_y)
 void
 move_pallet_up(Rectangle* pallet)
 {
-    if (pallet->y - pallet_vertical_speed > 0)
-        pallet->y -= pallet_vertical_speed;
+    float dy = -(pallet_vertical_speed * FRAME_ADJUSTMENT);
+    if (pallet->y + dy > 0)
+        pallet->y += dy;
     else
         pallet->y = 0;
 }
@@ -36,8 +38,9 @@ void
 move_pallet_down(Rectangle* pallet)
 {
     int bottom_of_pallet = pallet->y + pallet->height;
-    if (bottom_of_pallet + pallet_vertical_speed < GetScreenHeight())
-        pallet->y += pallet_vertical_speed;
+    float dy = pallet_vertical_speed * FRAME_ADJUSTMENT;
+    if (bottom_of_pallet + dy < GetScreenHeight())
+        pallet->y += dy;
     else
         pallet->y = GetScreenHeight() - pallet->height;
 }

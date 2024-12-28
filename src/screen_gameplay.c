@@ -110,8 +110,8 @@ UpdateGameplayScreen(void)
         new_round = false;
     }
 
-    ball.x += ball_speed.x;
-    ball.y -= ball_speed.y;
+    ball.x += ball_speed.x * FRAME_ADJUSTMENT;
+    ball.y -= ball_speed.y * FRAME_ADJUSTMENT;
 
     handle_keyboard_input();
 
