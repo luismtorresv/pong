@@ -142,8 +142,28 @@ void
 DrawGameplayScreen(void)
 {
     DrawFPS(10, 10);
-    draw_counters();
-    draw_middle_lines();
+
+    // Counters.
+    int font_size = 30;
+    int y_pos = 40;
+    float width = GetScreenWidth();
+    DrawText(
+      TextFormat("%d", counter_1), width * 1 / 4, y_pos, font_size, WHITE);
+    DrawText(
+      TextFormat("%d", counter_2), width * 3 / 4, y_pos, font_size, WHITE);
+
+    // Middle lines.
+    int line_separation = 10;
+    int line_height = 20;
+    for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
+         y_dashed += (line_height + line_separation)) {
+        DrawLine(GetScreenWidth() / 2,
+                 y_dashed,
+                 GetScreenWidth() / 2,
+                 y_dashed + line_height,
+                 WHITE);
+    }
+
     DrawRectangleRec(ball, WHITE);
     DrawRectangleRec(pallet_1, WHITE);
     DrawRectangleRec(pallet_2, WHITE);
@@ -187,33 +207,6 @@ handle_keyboard_input()
         move_pallet_2_towards(ball.y);
     else
         ai_move_pallet(&pallet_2, (float)GetScreenHeight() / 2);
-}
-
-static void
-draw_counters()
-{
-    int font_size = 30;
-    int y_pos = 40;
-    float width = GetScreenWidth();
-    DrawText(
-      TextFormat("%d", counter_1), width * 1 / 4, y_pos, font_size, WHITE);
-    DrawText(
-      TextFormat("%d", counter_2), width * 3 / 4, y_pos, font_size, WHITE);
-}
-
-static void
-draw_middle_lines()
-{
-    int line_separation = 10;
-    int line_height = 20;
-    for (int y_dashed = 0; y_dashed + line_height <= GetScreenHeight();
-         y_dashed += (line_height + line_separation)) {
-        DrawLine(GetScreenWidth() / 2,
-                 y_dashed,
-                 GetScreenWidth() / 2,
-                 y_dashed + line_height,
-                 WHITE);
-    }
 }
 
 //----------------------------------------------------------------------------------
