@@ -92,7 +92,6 @@ UpdateGameplayScreen(void)
 
         if (final_round) {
             finishScreen = 1;
-            StartTimer(&timer, 2);
             return;
         } else if (!initial_round) {
             PlaySound(score_sound);

@@ -23,7 +23,7 @@ InitInstructionsScreen(void)
 void
 UpdateInstructionsScreen(void)
 {
-    if (TimerDone(timer)) {
+    if (framesCounter++ == 120) {
         finishScreen = 1;
     }
 }

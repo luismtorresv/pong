@@ -26,8 +26,7 @@ InitEndingScreen(void)
 void
 UpdateEndingScreen(void)
 {
-    if (TimerDone(timer)) {
-        StartTimer(&timer, 2);
+    if (framesCounter++ == 180) {
         finishScreen = 1;
     }
 }

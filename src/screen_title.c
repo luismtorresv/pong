@@ -26,8 +26,7 @@ InitTitleScreen(void)
 void
 UpdateTitleScreen(void)
 {
-    if (TimerDone(timer)) {
-        StartTimer(&timer, 2);
+    if (framesCounter++ == 120) {
         finishScreen = 1;
     }
 }

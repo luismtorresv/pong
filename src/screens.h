@@ -47,12 +47,6 @@ typedef enum GameScreen
     ENDING
 } GameScreen;
 
-typedef struct Timer
-{
-    double startTime; // Start time (seconds)
-    double lifeTime;  // Lifetime (seconds)
-} Timer;
-
 //----------------------------------------------------------------------------------
 // Global Variables Declaration (shared by several modules)
 //----------------------------------------------------------------------------------
@@ -60,7 +54,6 @@ extern GameScreen currentScreen;
 extern Font font;
 extern Music music;
 extern Sound fxCoin;
-extern Timer timer;
 extern int counter_1, counter_2;
 
 #ifdef __cplusplus
@@ -112,27 +105,6 @@ extern "C"
     void DrawEndingScreen(void);
     void UnloadEndingScreen(void);
     int FinishEndingScreen(void);
-
-    //----------------------------------------------------------------------------------
-    // Ad hoc implementation of a timer from the wiki
-    //----------------------------------------------------------------------------------
-    inline static double GetElapsed(Timer timer);
-
-    static void StartTimer(Timer* timer, double lifetime)
-    {
-        timer->startTime = GetTime();
-        timer->lifeTime = lifetime;
-    }
-
-    static bool TimerDone(Timer timer)
-    {
-        return GetElapsed(timer) >= timer.lifeTime;
-    }
-
-    inline static double GetElapsed(Timer timer)
-    {
-        return GetTime() - timer.startTime;
-    }
 
 #ifdef __cplusplus
 }

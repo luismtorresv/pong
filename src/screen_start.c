@@ -27,7 +27,6 @@ UpdateStartScreen(void)
 {
     if (can_init_sound) {
         InitAudioDevice();
-        StartTimer(&timer, 2);
         finishScreen = 1;
     }
 }

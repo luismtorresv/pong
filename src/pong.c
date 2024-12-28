@@ -25,7 +25,6 @@ const int screenHeight = 600;
 // NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
 GameScreen currentScreen = START;
-Timer timer = { 0 };
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
