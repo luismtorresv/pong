@@ -37,7 +37,7 @@ PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= ../build
 PROJECT_INTERMEDIATES_PATH ?= $(PROJECT_BUILD_PATH)/intermediates
 PROJECT_SOURCE_FILES  ?= \
-	pong.c pallet.c \
+	pong.c \
 	screen_ending.c \
 	screen_gameplay.c \
 	screen_instructions.c \
@@ -340,7 +340,7 @@ $(PROJECT_INTERMEDIATES_PATH)/%.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Format source files (my addition)
-format: $(PROJECT_SOURCE_FILES) pallet.h screens.h helpers.h
+format: $(PROJECT_SOURCE_FILES) screens.h helpers.h
 	clang-format -i --Werror $^
 
 # Clean everything

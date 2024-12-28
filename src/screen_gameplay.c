@@ -1,13 +1,28 @@
-#include "pallet.h"
 #include "raylib.h"
+#include "raymath.h"
 #include "screens.h"
-
-#define PALLET_LEFT 1
-#define PALLET_RIGHT 2
+#include "stdlib.h"
 
 #define PALLET_WIDTH 20
 #define PALLET_HEIGHT 100
 #define PALLET_HORIZONTAL_SEPARATION 100
+
+//----------------------------------------------------------------------------------
+// Types and Structures Definition
+//----------------------------------------------------------------------------------
+typedef enum
+{
+    LEFT_PALLET = 0,
+    RIGHT_PALLET = 1,
+} PalletID;
+
+typedef struct Pallet
+{
+    Rectangle data;
+    PalletID id;
+} Pallet;
+
+typedef Rectangle Ball;
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -17,41 +32,51 @@ static int finishScreen = 0;
 
 int counter_1 = 0;
 int counter_2 = 0;
-bool new_round = true;
-bool player_1_starts = true;
-Vector2 ball_speed = { 0.0f, 0.0f };
+static bool new_round = true;
+static bool player_1_starts = true;
+static Vector2 ball_speed = { 0.0f, 0.0f };
 
-Rectangle pallet_1 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
-Rectangle pallet_2 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
-Rectangle ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
+static Pallet pallet_1 = { .data = { .width = PALLET_WIDTH,
+                                     .height = PALLET_HEIGHT },
+                           .id = LEFT_PALLET };
+static Pallet pallet_2 = { .data = { .width = PALLET_WIDTH,
+                                     .height = PALLET_HEIGHT },
+                           .id = RIGHT_PALLET };
+static Ball ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
 
-const Vector2 max_speed = { 100.0, 140.0 };
-const float pallet_vertical_speed = 5.0f;
-int ai_error_offset = 0;
+static const Vector2 max_speed = { 100.0, 140.0 };
+static const float pallet_vertical_speed = 5.0f;
+static int ai_error_offset = 0;
 
-Sound hit_sound, score_sound;
+static Sound hit_sound, score_sound;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
 
 static void
-set_ball_speed(Vector2 new_ball_speed);
-
-static void
-update_ai_error_offset();
-
-static void
 handle_keyboard_input();
 
 static void
-handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id);
+handle_collisions();
 
 static void
-draw_counters();
+ball_set_speed(Vector2 new_ball_speed);
 
 static void
-draw_middle_lines();
+_pallet_move(Rectangle* pallet, int desired_y);
+
+static void
+pallet_move_up(Rectangle* pallet, int pixels);
+
+static void
+pallet_move_down(Rectangle* pallet, int pixels);
+
+static void
+ai_update_error_offset();
+
+static void
+ai_move_right_pallet_towards(int y);
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -67,13 +92,14 @@ InitGameplayScreen(void)
     counter_1 = counter_2 = 0;
     new_round = player_1_starts = true;
 
-    pallet_1.x = PALLET_HORIZONTAL_SEPARATION;
-    pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
+    pallet_1.data.x = PALLET_HORIZONTAL_SEPARATION;
+    pallet_1.data.y = (float)GetScreenHeight() / 2 - pallet_1.data.height / 2;
 
-    pallet_2.x = GetScreenWidth() - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
-    pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
+    pallet_2.data.x =
+      GetScreenWidth() - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
+    pallet_2.data.y = (float)GetScreenHeight() / 2 - pallet_2.data.height / 2;
 
-    update_ai_error_offset();
+    ai_update_error_offset();
 
     hit_sound = LoadSound("resources/screens/gameplay/hit.ogg");
     score_sound = LoadSound("resources/screens/gameplay/score.ogg");
@@ -105,7 +131,7 @@ UpdateGameplayScreen(void)
                          : GetRandomValue(-2, -4);
         player_1_starts = !player_1_starts;
 
-        update_ai_error_offset();
+        ai_update_error_offset();
 
         new_round = false;
     }
@@ -114,9 +140,7 @@ UpdateGameplayScreen(void)
     ball.y -= ball_speed.y * FRAME_ADJUSTMENT;
 
     handle_keyboard_input();
-
-    handle_collisions(&ball, &pallet_1, PALLET_LEFT);
-    handle_collisions(&ball, &pallet_2, PALLET_RIGHT);
+    handle_collisions();
 
     if (ball.y < 0) {
         ball.y = 0;
@@ -163,8 +187,8 @@ DrawGameplayScreen(void)
     }
 
     DrawRectangleRec(ball, WHITE);
-    DrawRectangleRec(pallet_1, WHITE);
-    DrawRectangleRec(pallet_2, WHITE);
+    DrawRectangleRec(pallet_1.data, WHITE);
+    DrawRectangleRec(pallet_2.data, WHITE);
 }
 
 // Gameplay Screen Unload logic
@@ -185,14 +209,19 @@ FinishGameplayScreen(void)
 //----------------------------------------------------------------------------------
 // Module specific Functions Definition
 //----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+// Gameplay
+//----------------------------------------------------------------------------------
+
 static void
 handle_keyboard_input()
 {
     // Player 1.
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
-        move_pallet_up(&pallet_1, -1);
+        pallet_move_up(&pallet_1.data, -1);
     if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
-        move_pallet_down(&pallet_1, -1);
+        pallet_move_down(&pallet_1.data, -1);
 
     // Player 2.
     /* if (IsKeyDown(KEY_P)) */
@@ -202,56 +231,124 @@ handle_keyboard_input()
 
     // TODO: Create single-player mode.
     if (ball_speed.x > 0)
-        move_pallet_2_towards(ball.y);
+        ai_move_right_pallet_towards(ball.y);
     else
-        ai_move_pallet(&pallet_2, (float)GetScreenHeight() / 2);
+        _pallet_move(&pallet_2.data, (float)GetScreenHeight() / 2);
 }
 
-//----------------------------------------------------------------------------------
 // Handle collisions for both pallets
-//----------------------------------------------------------------------------------
 static void
-handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
+handle_collisions()
 {
-    if (CheckCollisionRecs(*ball, *pallet)) {
-        // Zero out velocity if the ball hits right in the middle of the pallet.
-        if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
-            ball_speed.y = 0;
-        else if (GetRandomValue(0, 1))
-            set_ball_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
-        else
-            set_ball_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
+    static Pallet* pallets[2] = { &pallet_1, &pallet_2 };
+    for (int i = 0; i < 2; ++i) {
+        if (CheckCollisionRecs(ball, pallets[i]->data)) {
+            // Zero out velocity if the ball hits right in the middle of the
+            // pallet.
+            if (ball.y == pallets[i]->data.y + pallets[i]->data.height / 2 -
+                            ball.height / 2)
+                ball_speed.y = 0;
+            else if (GetRandomValue(0, 1))
+                ball_set_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
+            else
+                ball_set_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
 
-        // Correct x position and increase horizontal velocity.
-        if (pallet_id == PALLET_LEFT) {
-            ball->x = pallet->x + pallet->width;
-            set_ball_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
-        } else {
-            ball->x = pallet->x - ball->width;
-            set_ball_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
+            // Correct x position and increase horizontal velocity.
+            switch (pallets[i]->id) {
+                case LEFT_PALLET:
+                    ball.x = pallets[i]->data.x + pallets[i]->data.width;
+                    ball_set_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
+                    break;
+                case RIGHT_PALLET:
+                    ball.x = pallets[i]->data.x - ball.width;
+                    ball_set_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
+                    break;
+                default:
+                    break;
+            }
+
+            // Bump.
+            ball_speed.x = -ball_speed.x;
+
+            PlaySound(hit_sound);
+
+            ai_update_error_offset();
         }
-
-        // Bump.
-        ball_speed.x = -ball_speed.x;
-
-        PlaySound(hit_sound);
-
-        update_ai_error_offset();
     }
 }
 
 //----------------------------------------------------------------------------------
-// Only allow changing the ball speed if it does not surpass the maximum speed.
+// Pallet
 //----------------------------------------------------------------------------------
+
+// Move a pallet without overflowing.
 static void
-set_ball_speed(Vector2 new_ball_speed)
+_pallet_move(Rectangle* pallet, int desired_y)
+{
+    int middle_of_pallet = pallet->y + pallet->height / 2;
+    int difference = abs(middle_of_pallet - desired_y);
+    int pixels = (difference < pallet_vertical_speed) ? difference : -1;
+    if (middle_of_pallet < desired_y) {
+        pallet_move_down(pallet, pixels);
+    } else if (middle_of_pallet > desired_y) {
+        pallet_move_up(pallet, pixels);
+    }
+}
+
+static void
+pallet_move_up(Rectangle* pallet, int pixels)
+{
+    if (pixels < 0)
+        pixels = pallet_vertical_speed;
+    float dy = -(pixels * FRAME_ADJUSTMENT);
+    if (pallet->y + dy > 0)
+        pallet->y += dy;
+    else
+        pallet->y = 0;
+}
+
+static void
+pallet_move_down(Rectangle* pallet, int pixels)
+{
+    if (pixels < 0)
+        pixels = pallet_vertical_speed;
+    int bottom_of_pallet = pallet->y + pallet->height;
+    float dy = pallet_vertical_speed * FRAME_ADJUSTMENT;
+    if (bottom_of_pallet + dy < GetScreenHeight())
+        pallet->y += dy;
+    else
+        pallet->y = GetScreenHeight() - pallet->height;
+}
+
+//----------------------------------------------------------------------------------
+// Ball
+//----------------------------------------------------------------------------------
+
+// Only allow changing the ball speed if it does not surpass the maximum speed.
+static void
+ball_set_speed(Vector2 new_ball_speed)
 {
     ball_speed = Vector2Min(ball_speed, new_ball_speed);
 }
 
+//----------------------------------------------------------------------------------
+// AI (a.k.a single-player mode :)
+//----------------------------------------------------------------------------------
 static void
-update_ai_error_offset()
+ai_update_error_offset()
 {
     int half_amplitude = PALLET_HEIGHT / 2 + 5;
     ai_error_offset = GetRandomValue(-half_amplitude, half_amplitude);
+}
+
+static void
+ai_move_right_pallet_towards(int y)
+{
+    const int tolerance = 10;
+    bool within_tolerance =
+      abs((int)(pallet_2.data.y + pallet_2.data.height / 2 - y)) < tolerance;
+
+    if (!within_tolerance) {
+        _pallet_move(&pallet_2.data, y + ai_error_offset);
+    }
 }
