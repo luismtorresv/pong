@@ -27,7 +27,7 @@ Rectangle ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
 
 const Vector2 max_speed = { 100.0, 140.0 };
 const float pallet_vertical_speed = 5.0f;
-int ai_error_offset;
+int ai_error_offset = 0;
 
 Sound hit_sound, score_sound;
 
