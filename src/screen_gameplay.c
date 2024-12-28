@@ -44,7 +44,7 @@ static Pallet pallet_2 = { .data = { .width = PALLET_WIDTH,
                            .id = RIGHT_PALLET };
 static Ball ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
 
-static const Vector2 max_speed = { 100.0, 140.0 };
+static const Vector2 ball_max_speed = { 100.0, 140.0 };
 static const float pallet_vertical_speed = 5.0f;
 static int ai_error_offset = 0;
 
@@ -328,7 +328,7 @@ pallet_move_down(Rectangle* pallet, int pixels)
 static void
 ball_set_speed(Vector2 new_ball_speed)
 {
-    ball_speed = Vector2Min(ball_speed, new_ball_speed);
+    ball_speed = Vector2Min(ball_max_speed, new_ball_speed);
 }
 
 //----------------------------------------------------------------------------------
