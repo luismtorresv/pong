@@ -14,7 +14,7 @@ To move up and down:
 
 ### Screenshots
 
-![Demo](recordings/demo.mp4)
+![Demo](recordings/demo.gif)
 
 ### Developers
 
