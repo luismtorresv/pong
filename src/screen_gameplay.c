@@ -107,6 +107,8 @@ UpdateGameplayScreen(void)
                          : GetRandomValue(-2, -4);
         player_1_starts = !player_1_starts;
 
+        update_ai_error_offset();
+
         new_round = false;
     }
 
