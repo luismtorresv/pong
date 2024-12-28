@@ -5,10 +5,10 @@ void
 move_pallet(Rectangle* pallet, int desired_y);
 
 void
-move_pallet_up(Rectangle* pallet);
+move_pallet_up(Rectangle* pallet, int pixels);
 
 void
-move_pallet_down(Rectangle* pallet);
+move_pallet_down(Rectangle* pallet, int pixels);
 
 void
 move_pallet_2_towards(int y);

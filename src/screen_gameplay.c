@@ -172,9 +172,9 @@ handle_keyboard_input()
 {
     // Player 1.
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
-        move_pallet_up(&pallet_1);
+        move_pallet_up(&pallet_1, -1);
     if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
-        move_pallet_down(&pallet_1);
+        move_pallet_down(&pallet_1, -1);
 
     // Player 2.
     /* if (IsKeyDown(KEY_P)) */

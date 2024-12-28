@@ -17,17 +17,21 @@ void
 ai_move_pallet(Rectangle* pallet, int desired_y)
 {
     int middle_of_pallet = pallet->y + pallet->height / 2;
+    int difference = abs(middle_of_pallet - desired_y);
+    int pixels = difference < pallet_vertical_speed ? difference : -1;
     if (middle_of_pallet < desired_y) {
-        move_pallet_down(pallet);
+        move_pallet_down(pallet, pixels);
     } else if (middle_of_pallet > desired_y) {
-        move_pallet_up(pallet);
+        move_pallet_up(pallet, pixels);
     }
 }
 
 void
-move_pallet_up(Rectangle* pallet)
+move_pallet_up(Rectangle* pallet, int pixels)
 {
-    float dy = -(pallet_vertical_speed * FRAME_ADJUSTMENT);
+    if (pixels < 0)
+        pixels = pallet_vertical_speed;
+    float dy = -(pixels * FRAME_ADJUSTMENT);
     if (pallet->y + dy > 0)
         pallet->y += dy;
     else
@@ -35,8 +39,10 @@ move_pallet_up(Rectangle* pallet)
 }
 
 void
-move_pallet_down(Rectangle* pallet)
+move_pallet_down(Rectangle* pallet, int pixels)
 {
+    if (pixels < 0)
+        pixels = pallet_vertical_speed;
     int bottom_of_pallet = pallet->y + pallet->height;
     float dy = pallet_vertical_speed * FRAME_ADJUSTMENT;
     if (bottom_of_pallet + dy < GetScreenHeight())
