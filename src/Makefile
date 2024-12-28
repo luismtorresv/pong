@@ -336,7 +336,7 @@ $(PROJECT_NAME): $(OBJS)
 
 # Compile source files
 # NOTE: This pattern will compile every module defined on $(OBJS)
-$(PROJECT_INTERMEDIATES_PATH)/%.o: %.c
+$(PROJECT_INTERMEDIATES_PATH)/%.o: %.c screens.h
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Format source files (my addition)
