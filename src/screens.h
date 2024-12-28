@@ -53,9 +53,6 @@ typedef enum GameScreen
 // Global Variables Declaration (shared by several modules)
 //----------------------------------------------------------------------------------
 extern GameScreen currentScreen;
-extern Font font;
-extern Music music;
-extern Sound fxCoin;
 extern int counter_1, counter_2;
 
 #ifdef __cplusplus
