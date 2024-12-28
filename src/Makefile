@@ -43,6 +43,7 @@ PROJECT_SOURCE_FILES  ?= \
 	screen_instructions.c \
 	screen_start.c \
 	screen_title.c \
+	helpers.c \
 
 RAYLIB_SRC_PATH       ?= $(HOME)/raylib/src
 RAYLIB_INCLUDE_PATH   ?= $(RAYLIB_SRC_PATH)
@@ -339,7 +340,7 @@ $(PROJECT_INTERMEDIATES_PATH)/%.o: %.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Format source files (my addition)
-format: $(PROJECT_SOURCE_FILES) pallet.h screens.h
+format: $(PROJECT_SOURCE_FILES) pallet.h screens.h helpers.h
 	clang-format -i --Werror $^
 
 # Clean everything

@@ -34,8 +34,6 @@ Sound hit_sound, score_sound;
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
-Vector2
-get_text_size(const char* text, int font_size);
 
 static void
 set_ball_speed(Vector2 new_ball_speed);
