@@ -44,7 +44,7 @@ PROJECT_SOURCE_FILES  ?= \
 	screen_start.c \
 	screen_title.c \
 
-RAYLIB_SRC_PATH       ?= $(HOME)/raylib/src/
+RAYLIB_SRC_PATH       ?= $(HOME)/raylib/src
 RAYLIB_INCLUDE_PATH   ?= $(RAYLIB_SRC_PATH)
 RAYLIB_LIB_PATH       ?= $(RAYLIB_SRC_PATH)
 
