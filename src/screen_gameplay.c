@@ -216,23 +216,6 @@ static void
 handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 {
     if (CheckCollisionRecs(*ball, *pallet)) {
-        Rectangle collision_rec = GetCollisionRec(*ball, *pallet);
-        /* TraceLog(LOG_DEBUG, */
-        /*          TextFormat("x=%f, y=%f, width=%f, height=%f", */
-        /*                     collision_rec.x, */
-        /*                     collision_rec.y, */
-        /*                     collision_rec.width, */
-        /*                     collision_rec.height)); */
-
-        // Handle case where the ball hits from below.
-        /* if (collision_rec.width >= collision_rec.height) { */
-        /*   ball_speed.y = -ball_speed.y; */
-        /*   if (collision_rec.y < pallet->y + pallet->height / 2) */
-        /*     ball->y = pallet->y - ball->height; */
-        /*   else */
-        /*     ball->y = pallet->y + pallet->height; */
-        /* } */
-
         // Zero out velocity if the ball hits right in the middle of the pallet.
         if (ball->y == pallet->y + pallet->height / 2 - ball->height / 2)
             ball_speed.y = 0;
@@ -256,7 +239,6 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
         PlaySound(hit_sound);
 
         update_ai_error_offset();
-        /* TraceLog(LOG_DEBUG, "ai_error_offset: %d", ai_error_offset); */
     }
 }
 
@@ -266,13 +248,7 @@ handle_collisions(Rectangle* ball, Rectangle* pallet, int pallet_id)
 static void
 set_ball_speed(Vector2 new_ball_speed)
 {
-    /* TraceLog( */
-    /*   LOG_DEBUG, "new_ball_speed: %4f, %4f", new_ball_speed.x,
-     * new_ball_speed.y); */
     ball_speed = Vector2Min(ball_speed, new_ball_speed);
-    /* TraceLog( */
-    /*   LOG_DEBUG, "actual new_ball_speed: %4f, %4f", ball_speed.x,
-     * ball_speed.y); */
 }
 
 static void
