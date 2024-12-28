@@ -18,7 +18,7 @@ ai_move_pallet(Rectangle* pallet, int desired_y)
 {
     int middle_of_pallet = pallet->y + pallet->height / 2;
     int difference = abs(middle_of_pallet - desired_y);
-    int pixels = difference < pallet_vertical_speed ? difference : -1;
+    int pixels = (difference < pallet_vertical_speed) ? difference : -1;
     if (middle_of_pallet < desired_y) {
         move_pallet_down(pallet, pixels);
     } else if (middle_of_pallet > desired_y) {

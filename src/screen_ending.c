@@ -37,7 +37,7 @@ DrawEndingScreen(void)
 {
     draw_centered_text("end of game!", 30, 0, -50);
     draw_centered_text(
-      TextFormat("Player %d wins!", counter_1 > counter_2 ? 1 : 2), 50, 0, 0);
+      TextFormat("Player %d wins!", (counter_1 > counter_2) ? 1 : 2), 50, 0, 0);
 }
 
 // Ending Screen Unload logic
