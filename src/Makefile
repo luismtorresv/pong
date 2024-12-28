@@ -346,22 +346,20 @@ format: $(PROJECT_SOURCE_FILES) pallet.h screens.h
 clean:
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
-		del *.o *.exe /s
+		del $(PROJECT_BUILD_PATH)
     endif
     ifeq ($(PLATFORM_OS),LINUX)
-		find . -type f -executable -delete
-		rm -fv *.o
+		rm -rf $(PROJECT_BUILD_PATH)
     endif
     ifeq ($(PLATFORM_OS),OSX)
-		rm -f *.o external/*.o $(PROJECT_NAME)
+		rm -rf $(PROJECT_BUILD_PATH)
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
-	find . -type f -executable -delete
-	rm -fv *.o
+	rm -f *.o external/*.o $(PROJECT_NAME)
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
-	del *.o *.html *.js
+	rm -rf $(PROJECT_BUILD_PATH)
 endif
 	@echo Cleaning done
 
