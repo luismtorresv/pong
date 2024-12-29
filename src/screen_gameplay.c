@@ -23,13 +23,18 @@ typedef Rectangle Pallet;
 typedef Rectangle Ball;
 
 //----------------------------------------------------------------------------------
+// Shared Variables Definition (global)
+// NOTE: Those variables are shared between modules through screens.h
+//----------------------------------------------------------------------------------
+int counter_1 = 0;
+int counter_2 = 0;
+
+//----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
 static int framesCounter = 0;
 static int finishScreen = 0;
 
-int counter_1 = 0;
-int counter_2 = 0;
 static bool new_round = true;
 static bool player_1_starts = true;
 static Vector2 ball_speed = { 0.0f, 0.0f };
