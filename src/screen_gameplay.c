@@ -18,11 +18,7 @@ typedef enum
     RIGHT_PALLET = 1,
 } PalletID;
 
-typedef struct Pallet
-{
-    Rectangle data;
-    PalletID id;
-} Pallet;
+typedef Rectangle Pallet;
 
 typedef Rectangle Ball;
 
@@ -38,12 +34,8 @@ static bool new_round = true;
 static bool player_1_starts = true;
 static Vector2 ball_speed = { 0.0f, 0.0f };
 
-static Pallet pallet_1 = { .data = { .width = PALLET_WIDTH,
-                                     .height = PALLET_HEIGHT },
-                           .id = LEFT_PALLET };
-static Pallet pallet_2 = { .data = { .width = PALLET_WIDTH,
-                                     .height = PALLET_HEIGHT },
-                           .id = RIGHT_PALLET };
+static Pallet pallet_1 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
+static Pallet pallet_2 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
 static Ball ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
 
 static const Vector2 ball_max_speed = { 100.0, 140.0 };
@@ -64,6 +56,9 @@ handle_collisions();
 
 static void
 ball_set_speed(Vector2 new_ball_speed);
+
+static PalletID
+pallet_which(Pallet* pallet);
 
 static void
 _pallet_move(Rectangle* pallet, int desired_y);
@@ -94,12 +89,11 @@ InitGameplayScreen(void)
     counter_1 = counter_2 = 0;
     new_round = player_1_starts = true;
 
-    pallet_1.data.x = PALLET_HORIZONTAL_SEPARATION;
-    pallet_1.data.y = (float)GetScreenHeight() / 2 - pallet_1.data.height / 2;
+    pallet_1.x = PALLET_HORIZONTAL_SEPARATION;
+    pallet_1.y = (float)GetScreenHeight() / 2 - pallet_1.height / 2;
 
-    pallet_2.data.x =
-      GetScreenWidth() - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
-    pallet_2.data.y = (float)GetScreenHeight() / 2 - pallet_2.data.height / 2;
+    pallet_2.x = GetScreenWidth() - PALLET_WIDTH - PALLET_HORIZONTAL_SEPARATION;
+    pallet_2.y = (float)GetScreenHeight() / 2 - pallet_2.height / 2;
 
     ai_update_error_offset();
 
@@ -189,8 +183,8 @@ DrawGameplayScreen(void)
     }
 
     DrawRectangleRec(ball, WHITE);
-    DrawRectangleRec(pallet_1.data, WHITE);
-    DrawRectangleRec(pallet_2.data, WHITE);
+    DrawRectangleRec(pallet_1, WHITE);
+    DrawRectangleRec(pallet_2, WHITE);
 }
 
 // Gameplay Screen Unload logic
@@ -221,9 +215,9 @@ handle_keyboard_input()
 {
     // Player 1.
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
-        pallet_move_up(&pallet_1.data, -1);
+        pallet_move_up(&pallet_1, -1);
     if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
-        pallet_move_down(&pallet_1.data, -1);
+        pallet_move_down(&pallet_1, -1);
 
     // Player 2.
     /* if (IsKeyDown(KEY_P)) */
@@ -235,53 +229,67 @@ handle_keyboard_input()
     if (ball_speed.x > 0)
         ai_move_right_pallet_towards(ball.y);
     else
-        _pallet_move(&pallet_2.data, (float)GetScreenHeight() / 2);
+        _pallet_move(&pallet_2, (float)GetScreenHeight() / 2);
 }
 
-// Handle collisions for both pallets
+// Handle collisions for any of the pallets.
 static void
 handle_collisions()
 {
-    static Pallet* pallets[2] = { &pallet_1, &pallet_2 };
-    for (int i = 0; i < 2; ++i) {
-        if (CheckCollisionRecs(ball, pallets[i]->data)) {
-            // Zero out velocity if the ball hits right in the middle of the
-            // pallet.
-            if (ball.y == pallets[i]->data.y + pallets[i]->data.height / 2 -
-                            ball.height / 2)
-                ball_speed.y = 0;
-            else if (GetRandomValue(0, 1))
-                ball_set_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
-            else
-                ball_set_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
+    // It's impossible for both pallets to collide with the ball, so we only
+    // need to know which one, if any, is colliding.
+    Pallet* collision_pallet = NULL;
+    if (CheckCollisionRecs(ball, pallet_1))
+        collision_pallet = &pallet_1;
+    else if (CheckCollisionRecs(ball, pallet_2))
+        collision_pallet = &pallet_2;
+    else // No collisions.
+        return;
 
-            // Correct x position and increase horizontal velocity.
-            switch (pallets[i]->id) {
-                case LEFT_PALLET:
-                    ball.x = pallets[i]->data.x + pallets[i]->data.width;
-                    ball_set_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
-                    break;
-                case RIGHT_PALLET:
-                    ball.x = pallets[i]->data.x - ball.width;
-                    ball_set_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
-                    break;
-                default:
-                    break;
-            }
+    // Zero out velocity if the ball hits right in the middle of the pallet.
+    if (ball.y ==
+        collision_pallet->y + collision_pallet->height / 2 - ball.height / 2)
+        ball_speed.y = 0;
+    else if (GetRandomValue(0, 1))
+        ball_set_speed((Vector2){ ball_speed.x, ball_speed.y + 1 });
+    else
+        ball_set_speed((Vector2){ ball_speed.x, ball_speed.y - 1 });
 
-            // Bump.
-            ball_speed.x = -ball_speed.x;
-
-            PlaySound(hit_sound);
-
-            ai_update_error_offset();
-        }
+    // Correct x position and increase horizontal velocity.
+    switch (pallet_which(collision_pallet)) {
+        case LEFT_PALLET:
+            ball.x = collision_pallet->x + collision_pallet->width;
+            ball_set_speed((Vector2){ ball_speed.x - 1, ball_speed.y });
+            break;
+        case RIGHT_PALLET:
+            ball.x = collision_pallet->x - ball.width;
+            ball_set_speed((Vector2){ ball_speed.x + 1, ball_speed.y });
+            break;
+        default:
+            break;
     }
+
+    // Bump.
+    ball_speed.x = -ball_speed.x;
+
+    PlaySound(hit_sound);
+
+    ai_update_error_offset();
 }
 
 //----------------------------------------------------------------------------------
 // Pallet
 //----------------------------------------------------------------------------------
+
+// Identify pallet for collision handling.
+static PalletID
+pallet_which(Pallet* pallet)
+{
+    if (pallet->x < (float)GetScreenWidth() / 2)
+        return LEFT_PALLET;
+    else
+        return RIGHT_PALLET;
+}
 
 // Move a pallet without overflowing.
 static void
@@ -348,9 +356,9 @@ ai_move_right_pallet_towards(int y)
 {
     const int tolerance = 10;
     bool within_tolerance =
-      abs((int)(pallet_2.data.y + pallet_2.data.height / 2 - y)) < tolerance;
+      abs((int)(pallet_2.y + pallet_2.height / 2 - y)) < tolerance;
 
     if (!within_tolerance) {
-        _pallet_move(&pallet_2.data, y + ai_error_offset);
+        _pallet_move(&pallet_2, y + ai_error_offset);
     }
 }
