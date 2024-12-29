@@ -37,8 +37,24 @@ void
 DrawEndingScreen(void)
 {
     draw_centered_text("end of game!", 30, 0, -50);
-    draw_centered_text(
-      TextFormat("Player %d wins!", (counter_1 > counter_2) ? 1 : 2), 50, 0, 0);
+    switch (gameMode) {
+        case SINGLE_PLAYER:
+            draw_centered_text((counter_1 > counter_2) ? "You win!"
+                                                       : "The machine won",
+                               50,
+                               0,
+                               0);
+            break;
+        case DOUBLE_PLAYER:
+            draw_centered_text(
+              TextFormat("Player %d wins!", (counter_1 > counter_2) ? 1 : 2),
+              50,
+              0,
+              0);
+            break;
+        default:
+            break;
+    }
 }
 
 // Ending Screen Unload logic

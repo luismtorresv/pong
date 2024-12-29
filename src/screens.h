@@ -45,10 +45,18 @@ typedef enum GameScreen
     ENDING
 } GameScreen;
 
+typedef enum GameMode
+{
+    NONE = 0,
+    SINGLE_PLAYER,
+    DOUBLE_PLAYER,
+} GameMode;
+
 //----------------------------------------------------------------------------------
 // Global Variables Declaration (shared by several modules)
 //----------------------------------------------------------------------------------
 extern GameScreen currentScreen;
+extern GameMode gameMode;
 extern int counter_1, counter_2;
 
 #ifdef __cplusplus

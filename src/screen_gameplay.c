@@ -219,17 +219,22 @@ handle_keyboard_input()
     if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
         pallet_move_down(&pallet_1, -1);
 
-    // Player 2.
-    /* if (IsKeyDown(KEY_P)) */
-    /*   move_pallet_up(&pallet_2); */
-    /* if (IsKeyDown(KEY_L)) */
-    /*   move_pallet_down(&pallet_2); */
-
-    // TODO: Create single-player mode.
-    if (ball_speed.x > 0)
-        ai_move_right_pallet_towards(ball.y);
-    else
-        _pallet_move(&pallet_2, (float)GetScreenHeight() / 2);
+    switch (gameMode) {
+        case SINGLE_PLAYER:
+            if (ball_speed.x > 0)
+                ai_move_right_pallet_towards(ball.y);
+            else
+                _pallet_move(&pallet_2, (float)GetScreenHeight() / 2);
+            break;
+        case DOUBLE_PLAYER:
+            if (IsKeyDown(KEY_P))
+                pallet_move_up(&pallet_2, -1);
+            if (IsKeyDown(KEY_L))
+                pallet_move_down(&pallet_2, -1);
+            break;
+        default:
+            break;
+    }
 }
 
 // Handle collisions for any of the pallets.
