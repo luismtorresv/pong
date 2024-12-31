@@ -1,10 +1,10 @@
-## pong
+# pong
 
-### Description
+## Description
 
 Recreation of the Atari classic "Pong", with single-player and shared-screen modes.
 
-### Controls
+## Controls
 
 To move up and down:
 
@@ -12,15 +12,15 @@ To move up and down:
 
 - Player 2: P and L
 
-### Screenshots
+## Screenshots
 
 ![Demo](recordings/demo.gif)
 
-### Developers
+## Developers
 
 - Luis Torres
 
-### License
+## License
 
 This project sources are licensed under an unmodified zlib/libpng license,
 which is an OSI-certified, BSD-like license that allows static linking with
