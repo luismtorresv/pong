@@ -37,8 +37,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0981CA98-E4A5-4DF1-987F-A41D09131EFC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>pong</RootNamespace>
-    <ProjectName>pong</ProjectName>
+    <RootNamespace>pung</RootNamespace>
+    <ProjectName>pung</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <RaylibSrcPath>C:\raylib\src</RaylibSrcPath>
   </PropertyGroup>
@@ -354,12 +354,12 @@
     <ClInclude Include="..\..\..\src\external\raygui.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\pong.c" />
+    <ClCompile Include="..\..\..\src\pung.c" />
     <!--Additional Compile Items-->
     <!--<ClCompile Include="..\..\..\src\extra_module.c" />-->
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\..\src\pong.rc" />
+    <ResourceCompile Include="..\..\..\src\pung.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

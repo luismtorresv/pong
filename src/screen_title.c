@@ -46,7 +46,7 @@ UpdateTitleScreen(void)
 void
 DrawTitleScreen(void)
 {
-    draw_centered_text("pong!", 30, 0, -50);
+    draw_centered_text("pung!", 30, 0, -50);
     draw_centered_text("programmed by L T", 20, 0, 0);
     draw_centered_text("powered by raylib", 20, 0, 50);
 

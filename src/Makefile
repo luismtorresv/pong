@@ -32,12 +32,12 @@
 PLATFORM              ?= PLATFORM_DESKTOP
 
 # Define project variables
-PROJECT_NAME          ?= pong
+PROJECT_NAME          ?= pung
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= ../build
 PROJECT_INTERMEDIATES_PATH ?= $(PROJECT_BUILD_PATH)/intermediates
 PROJECT_SOURCE_FILES  ?= \
-	pong.c \
+	pung.c \
 	screen_ending.c \
 	screen_gameplay.c \
 	screen_instructions.c \

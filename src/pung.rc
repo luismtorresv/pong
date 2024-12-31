@@ -1,4 +1,4 @@
-GLFW_ICON ICON "pong.ico"
+GLFW_ICON ICON "pung.ico"
 
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
@@ -10,12 +10,12 @@ BEGIN
     BLOCK "040904E4"	// English US
     BEGIN
 	  VALUE "CompanyName", ""
-      VALUE "FileDescription", "pong | Recreation of shared-screen Pong."
+      VALUE "FileDescription", "pung | Recreation of the Atari classic using raylib."
       VALUE "FileVersion", "1.0"
-      VALUE "InternalName", "pong"
+      VALUE "InternalName", "pung"
       VALUE "LegalCopyright", "(c) 2024 "
-      //VALUE "OriginalFilename", "pong.exe"
-      VALUE "pong", "pong"
+      //VALUE "OriginalFilename", "pung.exe"
+      VALUE "pung", "pung"
       VALUE "ProductVersion", "1.0"
     END
   END

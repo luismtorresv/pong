@@ -1,6 +1,6 @@
 /*******************************************************************************************
  *
- *   pong
+ *   pung
  *
  ********************************************************************************************/
 
@@ -42,7 +42,7 @@ main()
     //--------------------------------------------------------------------------------------
     SetTraceLogLevel(LOG_ALL);
 
-    InitWindow(screenWidth, screenHeight, "pong");
+    InitWindow(screenWidth, screenHeight, "pung");
     GuiLoadStyle("resources/common/style_terminal.rgs");
     SetWindowMinSize(screenWidth, screenHeight);
 
@@ -58,7 +58,6 @@ main()
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
-    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop

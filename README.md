@@ -1,8 +1,8 @@
-# pong
+# pung
 
 ## Description
 
-Recreation of the Atari classic "Pong", with single-player and shared-screen modes.
+Recreation of the Atari classic, with single-player and shared-screen modes.
 
 ## Controls
 

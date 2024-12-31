@@ -5,15 +5,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>pong</string>
+	<string>pung</string>
 	<key>CFBundleIconFile</key>
-	<string>pong.icns</string>
+	<string>pung.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.random.pong</string>
+	<string>com.random.pung</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>pong</string>
+	<string>pung</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
