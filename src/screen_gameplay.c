@@ -18,6 +18,12 @@ typedef enum
     RIGHT_PALLET = 1,
 } PalletID;
 
+typedef enum
+{
+    MOVE_UP = 0,
+    MOVE_DOWN = 1,
+} Direction;
+
 typedef Rectangle Pallet;
 
 typedef Rectangle Ball;
@@ -66,19 +72,16 @@ static PalletID
 pallet_which(Pallet* pallet);
 
 static void
-_pallet_move(Rectangle* pallet, int desired_y);
+_pallet_move(Rectangle* pallet, Direction direction, int pixels);
 
 static void
-pallet_move_up(Rectangle* pallet, int pixels);
+pallet_move(Rectangle* pallet, Direction direction);
 
 static void
-pallet_move_down(Rectangle* pallet, int pixels);
+ai_pallet_move_towards(int y);
 
 static void
 ai_update_error_offset();
-
-static void
-ai_move_right_pallet_towards(int y);
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -220,22 +223,22 @@ handle_keyboard_input()
 {
     // Player 1.
     if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
-        pallet_move_up(&pallet_1, -1);
+        pallet_move(&pallet_1, MOVE_UP);
     if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
-        pallet_move_down(&pallet_1, -1);
+        pallet_move(&pallet_1, MOVE_DOWN);
 
     switch (gameMode) {
         case SINGLE_PLAYER:
             if (ball_speed.x > 0)
-                ai_move_right_pallet_towards(ball.y);
+                ai_pallet_move_towards(ball.y);
             else
-                _pallet_move(&pallet_2, (float)GetScreenHeight() / 2);
+                ai_pallet_move_towards((float)GetScreenHeight() / 2);
             break;
         case DOUBLE_PLAYER:
             if (IsKeyDown(KEY_P))
-                pallet_move_up(&pallet_2, -1);
+                pallet_move(&pallet_2, MOVE_UP);
             if (IsKeyDown(KEY_L))
-                pallet_move_down(&pallet_2, -1);
+                pallet_move(&pallet_2, MOVE_DOWN);
             break;
         default:
             break;
@@ -302,42 +305,36 @@ pallet_which(Pallet* pallet)
 }
 
 // Move a pallet without overflowing.
+// Note: This is the "internal" version for use of both human players and AI.
 static void
-_pallet_move(Rectangle* pallet, int desired_y)
+_pallet_move(Rectangle* pallet, Direction direction, int pixels)
 {
-    int middle_of_pallet = pallet->y + pallet->height / 2;
-    int difference = abs(middle_of_pallet - desired_y);
-    int pixels = (difference < pallet_vertical_speed) ? difference : -1;
-    if (middle_of_pallet < desired_y) {
-        pallet_move_down(pallet, pixels);
-    } else if (middle_of_pallet > desired_y) {
-        pallet_move_up(pallet, pixels);
+    float dy;
+    switch (direction) {
+        case MOVE_UP: {
+            dy = -(pixels * FRAME_ADJUSTMENT);
+            if (pallet->y + dy > 0)
+                pallet->y += dy;
+            else
+                pallet->y = 0;
+        } break;
+        case MOVE_DOWN: {
+            dy = pixels * FRAME_ADJUSTMENT;
+            float bottom_of_pallet = pallet->y + pallet->height;
+            if (bottom_of_pallet + dy < GetScreenHeight())
+                pallet->y += dy;
+            else
+                pallet->y = GetScreenHeight() - pallet->height;
+        } break;
+        default:
+            break;
     }
 }
 
 static void
-pallet_move_up(Rectangle* pallet, int pixels)
+pallet_move(Rectangle* pallet, Direction direction)
 {
-    if (pixels < 0)
-        pixels = pallet_vertical_speed;
-    float dy = -(pixels * FRAME_ADJUSTMENT);
-    if (pallet->y + dy > 0)
-        pallet->y += dy;
-    else
-        pallet->y = 0;
-}
-
-static void
-pallet_move_down(Rectangle* pallet, int pixels)
-{
-    if (pixels < 0)
-        pixels = pallet_vertical_speed;
-    int bottom_of_pallet = pallet->y + pallet->height;
-    float dy = pallet_vertical_speed * FRAME_ADJUSTMENT;
-    if (bottom_of_pallet + dy < GetScreenHeight())
-        pallet->y += dy;
-    else
-        pallet->y = GetScreenHeight() - pallet->height;
+    _pallet_move(pallet, direction, pallet_vertical_speed);
 }
 
 //----------------------------------------------------------------------------------
@@ -354,6 +351,7 @@ ball_set_speed(Vector2 new_ball_speed)
 //----------------------------------------------------------------------------------
 // AI (a.k.a single-player mode :)
 //----------------------------------------------------------------------------------
+
 static void
 ai_update_error_offset()
 {
@@ -361,14 +359,32 @@ ai_update_error_offset()
     ai_error_offset = GetRandomValue(-half_amplitude, half_amplitude);
 }
 
+// Move right pallet towards a certain vertical coordinate.
 static void
-ai_move_right_pallet_towards(int y)
+ai_pallet_move_towards(int y)
 {
-    const int tolerance = 10;
-    bool within_tolerance =
-      abs((int)(pallet_2.y + pallet_2.height / 2 - y)) < tolerance;
+    y += ai_error_offset;
 
-    if (!within_tolerance) {
-        _pallet_move(&pallet_2, y + ai_error_offset);
+    int middle_of_pallet = pallet_2.y + pallet_2.height / 2;
+    int difference = abs(middle_of_pallet - y);
+    int pixels =
+      (difference < pallet_vertical_speed) ? difference : pallet_vertical_speed;
+
+    ///
+    // Honestly, I don't know whether this is a good or bad idea. I'll leave it
+    // here in case I want to review it someday (probably never :)
+    //
+    /* const int tolerance = 10; */
+    /* bool within_tolerance = difference < tolerance; */
+
+    /* if (!within_tolerance) { */
+    /*     _pallet_move(&pallet_2, y + ai_error_offset); */
+    /* } */
+    ///
+
+    if (middle_of_pallet < y) {
+        _pallet_move(&pallet_2, MOVE_DOWN, pixels);
+    } else if (middle_of_pallet > y) {
+        _pallet_move(&pallet_2, MOVE_UP, pixels);
     }
 }
