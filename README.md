@@ -1,4 +1,4 @@
-# pung
+# pong
 
 ## Description
 
@@ -45,7 +45,7 @@ To move up and down:
     emmake make
 
     # Serve the website
-    emrun pung/pung.html
+    emrun pong/pong.html
     ```
 
     If you're using Windows, add `-G "MinGW Makefiles"` if you want to use

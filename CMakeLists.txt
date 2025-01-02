@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24...3.30)
-project(pung)
+project(pong)
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -25,7 +25,7 @@ endif()
 # Our Project
 
 add_executable(${PROJECT_NAME}
-    src/pung.c
+    src/pong.c
     src/screen_ending.c
     src/screen_gameplay.c
     src/screen_instructions.c

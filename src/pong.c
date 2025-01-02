@@ -1,6 +1,6 @@
 /*******************************************************************************************
  *
- *   pung
+ *   pong
  *
  ********************************************************************************************/
 
@@ -42,7 +42,7 @@ main()
     //--------------------------------------------------------------------------------------
     SetTraceLogLevel(LOG_ALL);
 
-    InitWindow(screenWidth, screenHeight, "pung");
+    InitWindow(screenWidth, screenHeight, "pong");
     GuiLoadStyle("resources/common/style_terminal.rgs");
     SetWindowMinSize(screenWidth, screenHeight);
 
