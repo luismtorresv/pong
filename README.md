@@ -26,7 +26,7 @@ To move up and down:
     cmake -B build && cmake --build build
     ```
 
-- Web (TODO):
+- Web:
 
     Compiling for the web requires the [Emscripten
     SDK](https://emscripten.org/docs/getting_started/downloads.html):
@@ -34,9 +34,23 @@ To move up and down:
     ``` bash
     mkdir build
     cd build
+
+    # Configure CMake
     emcmake cmake .. -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXECUTABLE_SUFFIX=".html"
+
+    # Build the HTML/JS/WASM
     emmake make
+
+    # Serve the website
+    emrun pung.html
     ```
+
+    If you're using Windows, add `-G "MinGW Makefiles"` if you want to use
+    mingw instead of Visual Studio.
+
+    Also, Microsoft's C/C++ compiler might not be able to compile it because of
+    its lack of support for variable-length arrays. It happened to me on
+    another project. Had to use `clang`.
 
 ## Developers
 
