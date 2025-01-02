@@ -50,7 +50,7 @@ static Pallet pallet_2 = { .width = PALLET_WIDTH, .height = PALLET_HEIGHT };
 static Ball ball = { .x = 0, .y = 0, .width = 10, .height = 10 };
 
 static const Vector2 ball_max_speed = { 100.0, 140.0 };
-static const float pallet_vertical_speed = 5.0f;
+static const float pallet_vertical_speed = 8.0f;
 static int ai_error_offset = 0;
 
 static Sound hit_sound, score_sound;
