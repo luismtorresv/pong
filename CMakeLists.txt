@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
     src/screen_start.c
     src/screen_title.c
     src/helpers.c
+    src/timer.c
 )
 
 # Output files in a separate folder within the build directory.

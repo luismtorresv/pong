@@ -1,13 +1,14 @@
 #include "helpers.h"
 #include "raylib.h"
 #include "screens.h"
+#include "timer.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static int framesCounter = 0;
 static int finishScreen = 0;
 static Sound end_sound;
+static Timer timer = { 0 };
 
 //----------------------------------------------------------------------------------
 // Ending Screen Functions Definition
@@ -17,7 +18,7 @@ static Sound end_sound;
 void
 InitEndingScreen(void)
 {
-    framesCounter = 0;
+    StartTimer(&timer, 3);
     finishScreen = 0;
     end_sound = LoadSound("resources/screens/ending/end.ogg");
     PlaySound(end_sound);
@@ -27,7 +28,7 @@ InitEndingScreen(void)
 void
 UpdateEndingScreen(void)
 {
-    if (framesCounter++ == 180) {
+    if (TimerDone(timer)) {
         finishScreen = 1;
     }
 }

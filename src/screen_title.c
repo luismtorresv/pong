@@ -2,13 +2,14 @@
 #include "raygui.h"
 #include "raylib.h"
 #include "screens.h"
+#include "timer.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static int framesCounter = 0;
 static int finishScreen = 0;
 static Sound start_sound;
+static Timer timer = { 0 };
 
 //----------------------------------------------------------------------------------
 // Shared Variables Definition (global)
@@ -24,7 +25,7 @@ GameMode gameMode = NONE;
 void
 InitTitleScreen(void)
 {
-    framesCounter = 0;
+    StartTimer(&timer, 1);
     finishScreen = 0;
     gameMode = NONE;
     start_sound = LoadSound("resources/screens/title/start.ogg");
@@ -35,9 +36,6 @@ InitTitleScreen(void)
 void
 UpdateTitleScreen(void)
 {
-    if (framesCounter < 120)
-        ++framesCounter;
-
     if (gameMode != NONE)
         finishScreen = 1;
 }
@@ -50,7 +48,7 @@ DrawTitleScreen(void)
     draw_centered_text("programmed by L T", 20, 0, 0);
     draw_centered_text("powered by raylib", 20, 0, 50);
 
-    if (framesCounter == 120) {
+    if (TimerDone(timer)) {
         const float button_width = 180.0f;
         const float button_height = 50.0f;
 

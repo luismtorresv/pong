@@ -1,12 +1,13 @@
 #include "helpers.h"
 #include "raylib.h"
 #include "screens.h"
+#include "timer.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static int framesCounter = 0;
 static int finishScreen = 0;
+static Timer timer = { 0 };
 
 //----------------------------------------------------------------------------------
 // Instructions Screen Functions Definition
@@ -16,15 +17,15 @@ static int finishScreen = 0;
 void
 InitInstructionsScreen(void)
 {
-    framesCounter = 0;
     finishScreen = 0;
+    StartTimer(&timer, 2);
 }
 
 // Instructions Screen Update logic
 void
 UpdateInstructionsScreen(void)
 {
-    if (framesCounter++ == 120) {
+    if (TimerDone(timer)) {
         finishScreen = 1;
     }
 }
