@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.24...3.30)
 project(pung)
 
 # Generate compile_commands.json
