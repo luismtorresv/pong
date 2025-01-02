@@ -22,8 +22,11 @@ To move up and down:
 
 - Desktop:
 
-    ```
-    cmake -B build && cmake --build build
+    ```bash
+    mkdir build
+    cd build
+    cmake ..
+    make
     ```
 
 - Web:
@@ -42,7 +45,7 @@ To move up and down:
     emmake make
 
     # Serve the website
-    emrun pung.html
+    emrun pung/pung.html
     ```
 
     If you're using Windows, add `-G "MinGW Makefiles"` if you want to use
