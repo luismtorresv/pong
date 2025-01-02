@@ -38,7 +38,6 @@ int counter_2 = 0;
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static int framesCounter = 0;
 static int finishScreen = 0;
 
 static bool new_round = true;
@@ -91,7 +90,6 @@ ai_update_error_offset();
 void
 InitGameplayScreen(void)
 {
-    framesCounter = 0;
     finishScreen = 0;
 
     counter_1 = counter_2 = 0;

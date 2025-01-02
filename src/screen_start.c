@@ -5,7 +5,6 @@
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static int framesCounter = 0;
 static int finishScreen = 0;
 static bool can_init_sound = false;
 
@@ -17,7 +16,6 @@ static bool can_init_sound = false;
 void
 InitStartScreen(void)
 {
-    framesCounter = 0;
     finishScreen = 0;
 }
 
