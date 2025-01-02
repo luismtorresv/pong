@@ -193,6 +193,9 @@ DrawGameplayScreen(void)
     DrawRectangleRec(ball, WHITE);
     DrawRectangleRec(pallet_1, WHITE);
     DrawRectangleRec(pallet_2, WHITE);
+
+    // Draw border so that the limits of the field are visible on Web.
+    DrawRectangleLines(1, 0, GetScreenWidth()-1, GetScreenHeight()-1, WHITE);
 }
 
 // Gameplay Screen Unload logic
