@@ -27,6 +27,7 @@ To move up and down:
     cd build
     cmake ..
     make
+    cd pong  # Make sure resources can be found (relies on relative path).
     ```
 
 - Web:
