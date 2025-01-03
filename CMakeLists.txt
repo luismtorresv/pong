@@ -77,6 +77,15 @@ if (${PLATFORM} STREQUAL "Web")
         PUBLIC --preload-file resources
         PUBLIC --shell-file ${CMAKE_SOURCE_DIR}/src/minshell.html
     )
+elseif(${PLATFORM} STREQUAL "Desktop")
+    target_compile_options(${PROJECT_NAME}
+        PUBLIC -O3
+        PUBLIC -Wall
+        PUBLIC -std=c99
+        PUBLIC -Wno-missing-braces
+        PUBLIC -Wno-unused-value
+        PUBLIC -D_DEFAULT_SOURCE
+    )
 endif()
 
 # Checks if OSX and links appropriate frameworks (Only required on MacOS)
