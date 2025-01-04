@@ -18,6 +18,12 @@ To move up and down:
 
 ## Build
 
+## Prerequisites
+
+- A C99 compatible compiler
+
+- CMake >= 3.24
+
 ### CMake
 
 - Desktop:
