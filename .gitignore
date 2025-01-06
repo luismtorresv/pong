@@ -1,0 +1,10 @@
+# Ignore everything…
+*
+
+# Except for these specific files.
+!.gitignore
+!index.html
+!*.js
+!*.wasm
+!favicon.ico
+!icon.png
