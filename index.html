@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <title>pong | Recreation of the Atari classic.</title>
+
+    <meta name="title" content="pong by L.T.">
+    <meta name="description" content="Recreation of the Atari classic.">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Open Graph metatags for sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="pong by L.T.">
+    <meta property="og:image:alt" content="Recreation of the Atari classic." />
+    <meta property="og:site_name" content="pong">
+    <meta property="og:description" content="Recreation of the Atari classic.">
+
+    <!-- Disable Dark Reader statically -->
+    <meta name="darkreader-lock">
+
+    <!-- Favicon -->
+    <!-- <link rel="shortcut icon" href="https:///favicon.ico"> -->
+    <style>
+        html {
+            display: flex;
+            justify-content: center;
+        }
+        h1 {
+            font-family: Consolas, "Courier New", "Andale Mono", Monaco, monospace;
+            color: white;
+            text-align: center;
+        }
+        body {
+          margin: 0px;
+          overflow: hidden;
+          background-color: black;
+        }
+        canvas.emscripten {
+          border: 5px solid white;
+          background-color: black;
+          padding-left: 0;
+          padding-right: 0;
+          margin-left: auto;
+          margin-right: auto;
+          display: block;
+        }
+    </style>
+    </head>
+    <body>
+        <h1>pong!</h1>
+        <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+        <p id="output" />
+        <script>
+            var Module = {
+                print: (function() {
+                    var element = document.getElementById('output');
+                    if (element) element.value = ''; // clear browser cache
+                    return function(text) {
+                        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                        console.log(text);
+                        if (element) {
+                          element.value += text + "\n";
+                          element.scrollTop = element.scrollHeight; // focus on bottom
+                        }
+                    };
+                })(),
+                canvas: (function() {
+                    var canvas = document.getElementById('canvas');
+                    return canvas;
+                })()
+            };
+        </script>
+        <script async type="text/javascript" src="pong.js"></script>
+    </body>
+</html>
