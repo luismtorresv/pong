@@ -3,6 +3,7 @@
 
 # Except for these specific files.
 !.gitignore
+!.nojekyll
 !index.html
 !*.js
 !*.wasm
