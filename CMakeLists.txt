@@ -45,6 +45,20 @@ if (${PLATFORM} STREQUAL "Web")
         TARGET ${PROJECT_NAME} PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/resources $<TARGET_FILE_DIR:${PROJECT_NAME}>/../resources
     )
+
+    # Copy the favicon.
+    #
+    # Note: Using `configure_file` generates the build system each time the
+    # file, the `favicon.ico`, in this case, is changed.
+    #
+    # See also: https://stackoverflow.com/a/56390140
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/src/assets/favicon.ico
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+
     # And remove the directory after we're done.
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD

@@ -27,9 +27,8 @@ cp $OUTPUT_PATH/$PROJECT_NAME.html ./index.html
 cp $OUTPUT_PATH/$PROJECT_NAME.js \
    $OUTPUT_PATH/$PROJECT_NAME.wasm \
    $OUTPUT_PATH/$PROJECT_NAME.data \
+   $OUTPUT_PATH/favicon.ico \
    ./
-   # $OUTPUT_PATH/favicon.ico \
-   # $OUTPUT_PATH/icon.png \
 
 git add --all
 
