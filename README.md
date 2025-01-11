@@ -4,6 +4,16 @@
 
 Recreation of the Atari classic, with single-player and shared-screen modes.
 
+## Features
+
+- Single-player mode against a machine that fails sometimes
+
+- Local multi-player mode
+
+- Compiles to WebAssembly to be deployed as a static website
+
+- Includes a `CMakeLists.txt` file that downloads dependencies for you
+
 ## Controls
 
 To move up and down:
