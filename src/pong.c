@@ -50,6 +50,7 @@ main()
     currentScreen = START;
     InitStartScreen();
 #else
+    SetTargetFPS(60); // We don't need it to run at, say, 5000 FPS.
     InitAudioDevice();
     currentScreen = TITLE;
     InitTitleScreen();
