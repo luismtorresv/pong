@@ -18,7 +18,7 @@ Recreation of the Atari classic, with single-player and shared-screen modes.
 
 To move up and down:
 
-- Player 1: Up and Down (also Q and A, respectively)
+- Player 1: Q and A
 
 - Player 2: P and L
 

@@ -223,9 +223,9 @@ static void
 handle_keyboard_input()
 {
     // Player 1.
-    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_Q))
+    if (IsKeyDown(KEY_Q))
         pallet_move(&pallet_1, MOVE_UP);
-    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_A))
+    if (IsKeyDown(KEY_A))
         pallet_move(&pallet_1, MOVE_DOWN);
 
     switch (gameMode) {

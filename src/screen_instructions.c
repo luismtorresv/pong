@@ -41,7 +41,7 @@ DrawInstructionsScreen(void)
             break;
         case DOUBLE_PLAYER:
             draw_centered_text(
-              "Player 1: UP and DOWN (or Q and A)", 30, 0, -50);
+              "Player 1: Q and A", 30, 0, -50);
             draw_centered_text("Player 2: P and L", 30, 0, 0);
             break;
         default:
